@@ -379,12 +379,12 @@ void drawRobot(float x_mm, float y_mm, float ang_rad){
 void fillNF1Matrix(int x, int y, int value) {
 
 	int elements = 1;
-	int waveX[100];
-	int waveY[100];
+	int waveX[120];
+	int waveY[120];
 	waveX[0] = x;
 	waveY[0] = y;
-	int newWaveX[100];
-	int newWaveY[100];
+	int newWaveX[120];
+	int newWaveY[120];
 	int newElements = 0;
 	int connX, connY;
 	while(elements != 0) {

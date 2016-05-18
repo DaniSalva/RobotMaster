@@ -114,6 +114,44 @@ void align(int angle) {
 
 }
 
+void align2(int angle) {
+	if(angle!=0){ //0=not change direction
+				//Init Gyro
+		float rotSpeed = 0;
+	  float heading = 0;
+	  time1[T1] = 0;
+	  int gyroRot=angle;
+
+	  HTGYROstartCal(HTGYRO);
+
+
+
+		if(angle <0) { //Left
+			setSpeed(0, -0.6);
+		} else {					//Right
+			setSpeed(0, 0.6);
+		}
+
+		while (abs(heading)<abs(gyroRot))
+	  {
+	    // Wait until 20ms has passed
+	    while (time1[T1] < 20)
+	      wait1Msec(1);
+
+	    // Reset the timer
+	    time1[T1]=0;
+
+
+	    rotSpeed = HTGYROreadRot(HTGYRO);
+	    heading += rotSpeed * 0.02;
+		}
+
+
+		setSpeed(0,0);
+	}
+
+}
+
 void fordward(float distance) {
 	setSpeed(0.1,0);
 	wait1Msec(4000);

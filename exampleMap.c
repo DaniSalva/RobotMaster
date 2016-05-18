@@ -79,7 +79,7 @@ eraseDisplay();
 // reset odometry values and motor encoders.
   nMotorEncoder[motorC] = 0;
   nMotorEncoder[motorA] = 0;
-  robot_odometry.th = 0;
+  robot_odometry.th = PI;
   robot_odometry.x = 0;
   robot_odometry.y = 0;
 
@@ -190,8 +190,11 @@ eraseDisplay();
 	float columnX = diffX / 0.4;
 	float columnY = diffY / 0.4;
 
-	nxtDisplayTextLine(4, "%f %f", columnX, columnY);
+	nxtDisplayTextLine(4, "%d %d", (int)columnX+1, (int)columnY+1);
 	nxtDisplayTextLine(5, "%f", heading);
+	int newXcolumn = (int)columnX+1;
+	int newYcolumn = (int)columnY+1;
+	align2(heading);
 
 	StopTask(updateOdometry);
 
