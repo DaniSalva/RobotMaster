@@ -1,6 +1,7 @@
 
 #include "positionLib.c"
 #include "odometryAndMovement.c"
+#include "drivers/mindsensors-nxtcam.h"
 
 // variables globales de las dimensiones del mapa
 int sizeX;
@@ -416,49 +417,46 @@ void fillNF1Matrix(int x, int y, int value) {
 
 
 
+int rotMovement(float previousDir, float goalth){
+	int move=0;
+	float result= previousDir-goalth;
+	nxtDisplayTextLine(4, "result %f",result);
+	if(result==0){
+		move=0;
+	}
+	else if(result>(-1.6) && result<(-1.5)){
+		move=-1;
+		}else if(result<(1.6) && result>(1.5)){
+		move=1;
+		}else if(result>(-4.8) && result<(-4.7)){
+		move=1;
+		}else if(result<(4.8) && result>(4.7)){
+		move=-1;
+		}else if(result<(3.2) && result>(3.1)){
+		move=2;
+		}else if(result>(-3.2) && result<(-3.1)){
+		move=-2;
+	}
+	return move;
+}
+
 // go from CURRENT position (odometry) to (middle??) of cell (cellX, cellY)
 bool go(int cellX, int cellY, float previousDir, float th, int x, int y, int x_end, int y_end){
 	nxtDisplayTextLine(3, "%d %d", cellX, cellY);
-	int move=0;
-  float result= previousDir-th;
-  nxtDisplayTextLine(4, "result %f",result);
 
-  if(result==0){
-  	move=0;
-  }
-  else if(result>(-1.6) && result<(-1.5)){
-  	move=-1;
-  }else if(result<(1.6) && result>(1.5)){
-  	move=1;
-  }else if(result>(-4.8) && result<(-4.7)){
-  	move=1;
-  }else if(result<(4.8) && result>(4.7)){
-  	move=-1;
-  }else if(result<(3.2) && result>(3.1)){
-  	move=2;
-  }else if(result>(-3.2) && result<(-3.1)){
-  	move=-2;
-	}
-  //switch(previousDir){
-  //	case 0: move = 0; break;
-  //  case (-PI/2): move = -1;break;
-  //  case (PI/2): move = 1; break;
-  //  case (3*PI)/2: move = -1; break;
-  //  case (-3*PI)/2: move = 1; break;
-  //  case PI: move = 2; break;
-  //  case (-PI): move = -2; break;
-  //}
+	int move =rotMovement(previousDir,th);
 	nxtDisplayTextLine(6, "Move %d",move);
-  align(move);
-  if(SensorValue(SONAR) < SONAR_THRES){
-  	return false;
-  }
-  else{
-  	fordward(0.4);
-  	return true;
+	align(move);
+	if(SensorValue(SONAR) < SONAR_THRES){
+		return false;
+	}
+	else{
+		fordward(0.4);
+		return true;
 	}
 
 }
+
 
 void planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
 // Store in pathX and pathY respectively the coordinates of all the cells that the robot has to cross to reach the goal.
@@ -514,4 +512,66 @@ while(heuristica != 0) {
 	}
 
 }
+}
+
+float euclidianDistance(int x_1,int y_1, int x_2, int y_2){
+
+	return sqrt(pow((x_2-x_1),2)+pow((y_2-y_1),2));
+}
+
+void goToClosestExit(float thinit,int xpos, int ypos,int xleft, int yleft,int xright, int yright){
+	float th=0;
+	if(euclidianDistance(xpos,ypos,xleft,yleft)< euclidianDistance(xpos,ypos,xright,yright)){
+		th=planPath(thinit,xpos,ypos,xleft,yleft);
+	}
+	else{
+		th=planPath(thinit,xpos,ypos,xright,yright);
+	}
+	int move=rotMovement(th,0);
+	align(move);
+}
+
+//dir: 0 izquierda, 1 derecha
+void findExit(int goalColor, int otherColor){
+
+	int _nblobs;
+	int foundGoal=0;
+	double centerGoal=0;
+	double centerOther=0;
+	int foundOther=0;
+	blob_array _blobs;
+	bool _condensed = true;
+	// Initialise the camera
+	NXTCAMinit(cam);
+	bool initOdometry = false;
+
+	_nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
+	centerGoal=0;
+	centerOther=0;
+	foundGoal=0;
+	foundOther=0;
+	for (int i = 0; i < _nblobs; i++) {
+		if (_blobs[i].colour ==  goalColor){
+			foundGoal = 1;
+			double centerGoal=(_blobs[i].x1 + _blobs[i].x2)/2;
+		}
+		else if (_blobs[i].colour ==  otherColor){
+			foundOther=1;
+			double centerOther=(_blobs[i].x1 + _blobs[i].x2)/2;
+		}
+	}
+	if(foundGoal && foundOther){
+		if(centerGoal<centerOther){
+			nxtDisplayTextLine(1, "izquierda-d");
+		}
+		else{
+			nxtDisplayTextLine(1, "derecha-i");
+		}
+	}
+	else if(foundGoal){
+		nxtDisplayTextLine(1, "izquierda");
+	}
+	else if(foundOther){
+		nxtDisplayTextLine(1, "derecha");
+	}
 }

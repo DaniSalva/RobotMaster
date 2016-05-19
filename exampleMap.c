@@ -16,6 +16,12 @@
 #define GOAL_COLOR RED
 #define AREA_COLOR 100
 
+
+int x_left=4;
+int y_left=6;
+int x_right=5;
+int y_right=6;
+
 float MIDDLE_X_CAMERA = 95.5;
 float DESIRED_AREA = 2000;
 
@@ -90,8 +96,9 @@ eraseDisplay();
 	} else {
 		//planPath(PI,5,7,5,3);
 	}
-
-
+	goToClosestExit(0,4,5,x_left,y_left,x_right,y_right);
+	findExit(GREEN,BLUE);
+	wait1Msec(50000);
   float startX = 0;
   float startY = 0;
   float rotSpeed = 0;
