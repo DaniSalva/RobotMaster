@@ -63,7 +63,7 @@ task main () {
       _r = xscale(_blobs[i].x2);
       _b = yscale(_blobs[i].y2);
       nxtFillRect(_l, _t, _r, _b);
-      nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
+      //nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
      		nxtDisplayTextLine(5, "%d", _blobs[i].size);
     }
 

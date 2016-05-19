@@ -23,7 +23,7 @@ int x_right=5;
 int y_right=6;
 
 float MIDDLE_X_CAMERA = 95.5;
-float DESIRED_AREA = 2000;
+float DESIRED_AREA = 2500;
 
 float alignToBall(float x)
 {
@@ -84,20 +84,19 @@ eraseDisplay();
 // reset odometry values and motor encoders.
   nMotorEncoder[motorC] = 0;
   nMotorEncoder[motorA] = 0;
-  robot_odometry.th = PI;
+  robot_odometry.th = 0;
   robot_odometry.x = 0;
   robot_odometry.y = 0;
 
 	StartTask(updateOdometry);
 	if (color == 0) {
-		//planPath(PI,1,7,1,3);
-		//planPath((PI/2),1,3,3,3);
+		planPath(PI,1,7,1,3);
+		planPath((PI/2),1,3,3,3);
 	} else {
 		//planPath(PI,5,7,5,3);
 	}
-	goToClosestExit(0,4,5,x_left,y_left,x_right,y_right);
-	findExit(GREEN,BLUE);
-	wait1Msec(50000);
+
+
   float startX = 0;
   float startY = 0;
   float rotSpeed = 0;
@@ -116,6 +115,10 @@ eraseDisplay();
 	bool initOdometry = false;
 	HTGYROstartCal(HTGYRO);
 	time1[T1] = 0;
+	AcquireMutex(semaphore_odometry);
+				  startX = robot_odometry.x;
+				  startY = robot_odometry.y;
+				  ReleaseMutex(semaphore_odometry);
 	while (continueTracking) {
 
 		// Get the blobs from the camera into the array
@@ -130,10 +133,7 @@ eraseDisplay();
      	if (_blobs[i].colour == RED /*&& _blobs[i].size > AREA_COLOR*/) {
      		found = 1;
      		if (!initOdometry) {
-     			AcquireMutex(semaphore_odometry);
-				  startX = robot_odometry.x;
-				  startY = robot_odometry.y;
-				  ReleaseMutex(semaphore_odometry);
+ 					//TODO: remove this
 				  initOdometry = true;
 				}
      		nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
@@ -154,7 +154,7 @@ eraseDisplay();
        //setSpeed(0, 0.5);
      nxtDisplayTextLine(3, "not found");
      wait1Msec(300);
-     setSpeed(0, 0.5);
+     setSpeed(0, -0.5);
 
 
 
@@ -173,7 +173,7 @@ eraseDisplay();
 
 	// Catch the ball?
 	setSpeed(0.2, 0);
-	wait1Msec(475);
+	wait1Msec(800);
 	motor[motorB] = 15;
 	setSpeed(0,0);
 	wait1Msec(600);
@@ -189,18 +189,29 @@ eraseDisplay();
 
 
 	float diffX = endX - startX;
-	float diffY = endY - startY;
+	float diffY = -1*(endY - startY);
 
-	nxtDisplayTextLine(3, "%f %f", diffX, diffY);
-
+	nxtDisplayTextLine(3, "x %f", diffY);
+	nxtDisplayTextLine(4, "y %f",diffX);
 	float columnX = diffX / 0.4;
 	float columnY = diffY / 0.4;
 
-	nxtDisplayTextLine(4, "%d %d", (int)columnX+1, (int)columnY+1);
-	nxtDisplayTextLine(5, "%f", heading);
-	int newXcolumn = (int)columnX+1;
-	int newYcolumn = (int)columnY+1;
+	int newYcolumn = 0;
+	if (columnY > 0) {
+		newYcolumn = (int)(columnY+0.5);
+	} else {
+		newYcolumn = (int)(columnY-0.5);
+	}
+	int newXcolumn = (int)(columnX+0.5);
+	newXcolumn =newXcolumn + 3;
+	newYcolumn = newYcolumn + 3;
+	nxtDisplayTextLine(5, "x %d y %d", newYcolumn, newXcolumn;
+	nxtDisplayTextLine(6, "%f", heading);
 	align2(heading);
+	wait1Msec(5000);
+
+	goToClosestExit(0,newYcolumn,newXcolumn,x_left,y_left,x_right,y_right);
+	findExit(GREEN,BLUE);
 
 	StopTask(updateOdometry);
 
