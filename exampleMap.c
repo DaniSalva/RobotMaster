@@ -50,26 +50,25 @@ initConnections();
 string mp="mapaA.txt";
 int color = 0;
 
-int light = LSvalNorm(lightSensor);
-if(light < 18)  // If the Light Sensor reads a value less than 45:
-{
-  nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
-  mp = "mapaB.txt";
-  color = 1;
-}
-else                               // If the Light Sensor reads a value greater than or equal to 45:
-{
-  nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
-  mp = "mapaA.txt";
-  color = 0;
-}
+//int light = LSvalNorm(lightSensor);
+//if(light < 18)  // If the Light Sensor reads a value less than 45:
+//{
+//  nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
+//  mp = "mapaB.txt";
+//  color = 1;
+//}
+//else                               // If the Light Sensor reads a value greater than or equal to 45:
+//{
+//  nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
+//  mp = "mapaA.txt";
+//  color = 0;
+//}
 
 if(	loadMap(mp,connectionsMatrix[0][0]) ){
   nxtDisplayTextLine(6, "Mapa loaded ok");
 }else{
   nxtDisplayTextLine(6, "Mapa NOT loaded");
 }
-
 
 /*drawMap();
 th=-pi/4 + (20*PI)/180;
