@@ -50,19 +50,23 @@ initConnections();
 string mp="mapaA.txt";
 int color = 0;
 
-//int light = LSvalNorm(lightSensor);
-//if(light < 18)  // If the Light Sensor reads a value less than 45:
-//{
-//  nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
-//  mp = "mapaB.txt";
-//  color = 1;
-//}
-//else                               // If the Light Sensor reads a value greater than or equal to 45:
-//{
-//  nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
-//  mp = "mapaA.txt";
-//  color = 0;
-//}
+/********************************************************/
+/*************STEP: SELECT COLOR AND MAP*****************/
+/********************************************************/
+int light = LSvalNorm(lightSensor);
+light = 10; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+if(light < 18)  // If the Light Sensor reads a value less than 45:
+{
+  nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
+  mp = "mapaB.txt";
+  color = 1;
+}
+else                               // If the Light Sensor reads a value greater than or equal to 45:
+{
+  nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
+  mp = "mapaA.txt";
+  color = 0;
+}
 
 if(	loadMap(mp,connectionsMatrix[0][0]) ){
   nxtDisplayTextLine(6, "Mapa loaded ok");
@@ -88,23 +92,25 @@ eraseDisplay();
   robot_odometry.x = 0;
   robot_odometry.y = 0;
 
+  /********************************************************/
+	/*************ZIG ZAG AND GO TO BALL ROOM****************/
+	/********************************************************/
 	StartTask(updateOdometry);
 	if (color == 0) {
 		planPath(PI,1,7,1,3);
 		planPath((PI/2),1,3,3,3);
 	} else {
 		//planPath(PI,5,7,5,3);
+		planPath(-(PI/2),5,3,3,3);
 	}
 
+  /********************************************************/
+	/*******************FIND BALL****************************/
+	/********************************************************/
 
-  float startX = 0;
-  float startY = 0;
-  float rotSpeed = 0;
+	float rotSpeed = 0;
   float heading = 0;
 
-
-
-	//CAMERA TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	bool continueTracking = true;
   int _nblobs;
   blob_array _blobs;
@@ -112,7 +118,6 @@ eraseDisplay();
 
   // Initialise the camera
 	NXTCAMinit(cam);
-	bool initOdometry = false;
 	HTGYROstartCal(HTGYRO);
 	time1[T1] = 0;
 	AcquireMutex(semaphore_odometry);
@@ -120,9 +125,16 @@ eraseDisplay();
 	float	aux_odometryY = robot_odometry.y;
 	float	aux_odometryTH = robot_odometry.th;
 	robot_odometry.x = 0;
-	robot_odometry.y = 0;
+	if (color == 0) {
+		robot_odometry.y = 0;
+	} else {
+		robot_odometry.y = 1.2;
+	}
 	robot_odometry.th = 0;
 	ReleaseMutex(semaphore_odometry);
+	if (color == 1) {
+		aux_odometryY = aux_odometryY - 1.2;
+	}
 	while (continueTracking) {
 
 		// Get the blobs from the camera into the array
@@ -136,10 +148,6 @@ eraseDisplay();
 
      	if (_blobs[i].colour == RED /*&& _blobs[i].size > AREA_COLOR*/) {
      		found = 1;
-     		if (!initOdometry) {
- 					//TODO: remove this
-				  initOdometry = true;
-				}
      		nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
      		nxtDisplayTextLine(5, "%d", _blobs[i].size);
      		float w = alignToBall((_blobs[i].x1 + _blobs[i].x2)/2);
@@ -155,10 +163,13 @@ eraseDisplay();
      }
 
      if (!found) {
-       //setSpeed(0, 0.5);
-     nxtDisplayTextLine(3, "not found");
-     wait1Msec(300);
-     setSpeed(0, -0.5);
+				nxtDisplayTextLine(3, "not found");
+				wait1Msec(300);
+				if (color == 0) {
+					setSpeed(0, -0.5);
+				} else {
+					setSpeed(0, 0.5);
+				}
 
 
 
@@ -175,42 +186,41 @@ eraseDisplay();
 	}
 
 
-	// Catch the ball?
+	/********************************************************/
+	/****************CATCH THE BALL**************************/
+	/********************************************************/
 	setSpeed(0.2, 0);
 	wait1Msec(800);
 	motor[motorB] = 15;
 	setSpeed(0,0);
-	wait1Msec(550);
+	wait1Msec(590);
   motor[motorB] = 0;
 
-	//END CAMERA TEST
+	/********************************************************/
+	/************GO TO PROPER POSITION TO EXIT***************/
+	/********************************************************/
 	align2(heading);
 
-	float endX = 0;
-	float endY = 0;
-
   AcquireMutex(semaphore_odometry);
-  endX = robot_odometry.x;
-  endY = robot_odometry.y;
+  float endX = robot_odometry.x;
+  float endY = robot_odometry.y;
   robot_odometry.th = 0;
-  //robot_odometry.x = robot_odometry.x + aux_odometryX;  TODO: SET THIS!!!!!
-	//robot_odometry.y = robot_odometry.y + aux_odometryY;
-	//robot_odometry.th = robot_odometry.th + aux_odometryTH;
   ReleaseMutex(semaphore_odometry);
 
   float goalY = 1.2;
   float goalX = 0.4;
+  if (color == 1) {
+  	goalX = 0.8;
+  }
 
-  nxtDisplayTextLine(3, "x %f", endY);
-	nxtDisplayTextLine(4, "y %f",endX);
+  //nxtDisplayTextLine(3, "x %f", endY);
+	//nxtDisplayTextLine(4, "y %f",endX);
 	while (endX < goalY) {
 		setSpeed(0.15,0);
 		wait1Msec(100);
 		AcquireMutex(semaphore_odometry);
 	  endX = robot_odometry.x;
 	  ReleaseMutex(semaphore_odometry);
-	  nxtDisplayTextLine(3, "x %f", endY);
-		nxtDisplayTextLine(4, "y %f",endX);
 	}
 	setSpeed(0,0);
 	if(endY > goalX) {
@@ -221,8 +231,6 @@ eraseDisplay();
 			AcquireMutex(semaphore_odometry);
 		  endY = robot_odometry.y;
 		  ReleaseMutex(semaphore_odometry);
-		  nxtDisplayTextLine(3, "x %f", endY);
-			nxtDisplayTextLine(4, "y %f",endX);
 		}
 		setSpeed(0,0);
 		align2(-90);
@@ -234,42 +242,23 @@ eraseDisplay();
 			AcquireMutex(semaphore_odometry);
 		  endY = robot_odometry.y;
 		  ReleaseMutex(semaphore_odometry);
-		  nxtDisplayTextLine(3, "x %f", endY);
-			nxtDisplayTextLine(4, "y %f",endX);
 		}
 		setSpeed(0,0);
 		align2(90);
 	}
 
+	//Reset proper odometry
 	AcquireMutex(semaphore_odometry);
   robot_odometry.x = robot_odometry.x + aux_odometryX;
 	robot_odometry.y = robot_odometry.y + aux_odometryY;
 	robot_odometry.th = robot_odometry.th + aux_odometryTH;
   ReleaseMutex(semaphore_odometry);
 
+  /********************************************************/
+	/********************EXIT********************************/
+	/********************************************************/
 
-	/*float diffX = endX - startX;
-	float diffY = -1*(endY - startY);
-
-	nxtDisplayTextLine(3, "x %f", diffY);
-	nxtDisplayTextLine(4, "y %f",diffX);
-	float columnX = diffX / 0.4;
-	float columnY = diffY / 0.4;
-
-	int newYcolumn = 0;
-	if (columnY > 0) {
-		newYcolumn = (int)(columnY+0.5);
-	} else {
-		newYcolumn = (int)(columnY-0.5);
-	}
-	int newXcolumn = (int)(columnX+0.5);
-	newXcolumn =newXcolumn + 3;
-	newYcolumn = newYcolumn + 3;
-	nxtDisplayTextLine(5, "x %d y %d", newYcolumn, newXcolumn;
-	nxtDisplayTextLine(6, "%f", heading);
-	align2(heading);
-	wait1Msec(5000);*/
-
+  //TODO: this for different maps
 	findExit(GREEN,BLUE);
 
 	StopTask(updateOdometry);
