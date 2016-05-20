@@ -116,9 +116,13 @@ eraseDisplay();
 	HTGYROstartCal(HTGYRO);
 	time1[T1] = 0;
 	AcquireMutex(semaphore_odometry);
-				  startX = robot_odometry.x;
-				  startY = robot_odometry.y;
-				  ReleaseMutex(semaphore_odometry);
+	float aux_odometryX = robot_odometry.x;
+	float	aux_odometryY = robot_odometry.y;
+	float	aux_odometryTH = robot_odometry.th;
+	robot_odometry.x = 0;
+	robot_odometry.y = 0;
+	robot_odometry.th = 0;
+	ReleaseMutex(semaphore_odometry);
 	while (continueTracking) {
 
 		// Get the blobs from the camera into the array
@@ -179,16 +183,56 @@ eraseDisplay();
 	wait1Msec(600);
   motor[motorB] = 0;
 
-	//END CAMERA TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//END CAMERA TEST
 
-
+	float endX = 0;
+	float endY = 0;
   AcquireMutex(semaphore_odometry);
-  float endX = robot_odometry.x;
-  float endY = robot_odometry.y;
+  endX = robot_odometry.x;
+  endY = robot_odometry.y;
+  //robot_odometry.x = robot_odometry.x + aux_odometryX;  TODO: SET THIS!!!!!
+	//robot_odometry.y = robot_odometry.y + aux_odometryY;
+	//robot_odometry.th = robot_odometry.th + aux_odometryTH;
   ReleaseMutex(semaphore_odometry);
 
+  float goalY = 1.2;
+  float goalX = 0.4;
+	align2(heading);
+	//TODO: set odometry th to 0?????????????????
+	while (endX < goalY) {
+		setSpeed(0.15,0);
+		wait1Msec(100);
+		AcquireMutex(semaphore_odometry);
+	  endX = robot_odometry.x;
+	  ReleaseMutex(semaphore_odometry);
+	}
+	setSpeed(0,0);
+	if(endY > goalX) {
+		align2(-90);
+		while (endY < goalX) {
+			setSpeed(0.15,0);
+			wait1Msec(100);
+			AcquireMutex(semaphore_odometry);
+		  endY = robot_odometry.y;
+		  ReleaseMutex(semaphore_odometry);
+		}
+		setSpeed(0,0);
+		align2(90);
+	} else {
+		align2(90);
+		while (endY > goalX) {
+			setSpeed(0.15,0);
+			wait1Msec(100);
+			AcquireMutex(semaphore_odometry);
+		  endY = robot_odometry.y;
+		  ReleaseMutex(semaphore_odometry);
+		}
+		setSpeed(0,0);
+		align2(-90);
+	}
 
-	float diffX = endX - startX;
+
+	/*float diffX = endX - startX;
 	float diffY = -1*(endY - startY);
 
 	nxtDisplayTextLine(3, "x %f", diffY);
@@ -208,7 +252,7 @@ eraseDisplay();
 	nxtDisplayTextLine(5, "x %d y %d", newYcolumn, newXcolumn;
 	nxtDisplayTextLine(6, "%f", heading);
 	align2(heading);
-	wait1Msec(5000);
+	wait1Msec(5000);*/
 
 	goToClosestExit(0,newYcolumn,newXcolumn,x_left,y_left,x_right,y_right);
 	findExit(GREEN,BLUE);
