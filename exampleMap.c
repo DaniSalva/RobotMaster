@@ -180,16 +180,19 @@ eraseDisplay();
 	wait1Msec(800);
 	motor[motorB] = 15;
 	setSpeed(0,0);
-	wait1Msec(600);
+	wait1Msec(550);
   motor[motorB] = 0;
 
 	//END CAMERA TEST
+	align2(heading);
 
 	float endX = 0;
 	float endY = 0;
+
   AcquireMutex(semaphore_odometry);
   endX = robot_odometry.x;
   endY = robot_odometry.y;
+  robot_odometry.th = 0;
   //robot_odometry.x = robot_odometry.x + aux_odometryX;  TODO: SET THIS!!!!!
 	//robot_odometry.y = robot_odometry.y + aux_odometryY;
 	//robot_odometry.th = robot_odometry.th + aux_odometryTH;
@@ -197,28 +200,20 @@ eraseDisplay();
 
   float goalY = 1.2;
   float goalX = 0.4;
-	align2(heading);
-	//TODO: set odometry th to 0?????????????????
+
+  nxtDisplayTextLine(3, "x %f", endY);
+	nxtDisplayTextLine(4, "y %f",endX);
 	while (endX < goalY) {
 		setSpeed(0.15,0);
 		wait1Msec(100);
 		AcquireMutex(semaphore_odometry);
 	  endX = robot_odometry.x;
 	  ReleaseMutex(semaphore_odometry);
+	  nxtDisplayTextLine(3, "x %f", endY);
+		nxtDisplayTextLine(4, "y %f",endX);
 	}
 	setSpeed(0,0);
 	if(endY > goalX) {
-		align2(-90);
-		while (endY < goalX) {
-			setSpeed(0.15,0);
-			wait1Msec(100);
-			AcquireMutex(semaphore_odometry);
-		  endY = robot_odometry.y;
-		  ReleaseMutex(semaphore_odometry);
-		}
-		setSpeed(0,0);
-		align2(90);
-	} else {
 		align2(90);
 		while (endY > goalX) {
 			setSpeed(0.15,0);
@@ -226,10 +221,31 @@ eraseDisplay();
 			AcquireMutex(semaphore_odometry);
 		  endY = robot_odometry.y;
 		  ReleaseMutex(semaphore_odometry);
+		  nxtDisplayTextLine(3, "x %f", endY);
+			nxtDisplayTextLine(4, "y %f",endX);
 		}
 		setSpeed(0,0);
 		align2(-90);
+	} else {
+		align2(-90);
+		while (endY < goalX) {
+			setSpeed(0.15,0);
+			wait1Msec(100);
+			AcquireMutex(semaphore_odometry);
+		  endY = robot_odometry.y;
+		  ReleaseMutex(semaphore_odometry);
+		  nxtDisplayTextLine(3, "x %f", endY);
+			nxtDisplayTextLine(4, "y %f",endX);
+		}
+		setSpeed(0,0);
+		align2(90);
 	}
+
+	AcquireMutex(semaphore_odometry);
+  robot_odometry.x = robot_odometry.x + aux_odometryX;
+	robot_odometry.y = robot_odometry.y + aux_odometryY;
+	robot_odometry.th = robot_odometry.th + aux_odometryTH;
+  ReleaseMutex(semaphore_odometry);
 
 
 	/*float diffX = endX - startX;
@@ -254,7 +270,6 @@ eraseDisplay();
 	align2(heading);
 	wait1Msec(5000);*/
 
-	goToClosestExit(0,newYcolumn,newXcolumn,x_left,y_left,x_right,y_right);
 	findExit(GREEN,BLUE);
 
 	StopTask(updateOdometry);
