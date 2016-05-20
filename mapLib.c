@@ -537,8 +537,24 @@ void goToClosestExit(float thinit,int xpos, int ypos,int xleft, int yleft,int xr
 	align(move);
 }
 
-//dir: 0 izquierda, 1 derecha
-void findExit(int goalColor, int otherColor){
+void goRightExit(int x, int y){
+	float th=planPath(0,x,y,6,7);
+	nxtDisplayTextLine(1,"%f",th);
+	int move=rotMovement(th,0);
+	align(move);
+	fordward(0.4);
+}
+
+void goLeftExit(int x, int y){
+	float th=planPath(0,x,y,3,7);
+	nxtDisplayTextLine(1, "%f",th);
+	int move=rotMovement(th,0);
+	align(move);
+	fordward(0.4)
+}
+
+//side: 0 izquierda, 1 derecha
+void findExit(int goalColor, int otherColor,int side){
 
 	int _nblobs;
 	int foundGoal=0;
@@ -566,39 +582,48 @@ void findExit(int goalColor, int otherColor){
 			double centerOther=(_blobs[i].x1 + _blobs[i].x2)/2;
 		}
 	}
+
 	if(foundGoal && foundOther){
 		if(centerGoal>centerOther){
-			nxtDisplayTextLine(1, "derecha-i");
-				float th=planPath(0,4,6,6,7);
-				nxtDisplayTextLine(1,"%f",th);
-				int move=rotMovement(th,0);
-				align(move);
-				fordward(0.4);
+			if(side==0){
+				nxtDisplayTextLine(1, "izq-dere");
+				goRightExit(4,6);
+			}
+			else{
+				nxtDisplayTextLine(1, "dere-dere");
+				goRightExit(5,6);
+			}
+
 		}
 		else{
-			nxtDisplayTextLine(1, "izquierda-d");
-			float th=planPath(0,4,6,3,7);
-			int move=rotMovement(th,0);
-			align(move);
-			fordward(0.4);
+			if(side==0){
+				nxtDisplayTextLine(1, "izq-izq");
+				goLeftExit(4,6);
+			}
+			else{
+				nxtDisplayTextLine(1, "dere-izq");
+				goLeftExit(5,6);
+			}
 		}
 	}
 	else if(foundGoal){
-		nxtDisplayTextLine(1, "izquierda");
-		float th=planPath(0,4,6,3,7);
-		nxtDisplayTextLine(1, "%f",th);
-		int move=rotMovement(th,0);
-		align(move);
-		fordward(0.4);
-
-
+		if(side==0){
+			nxtDisplayTextLine(1, "izq-izq");
+			goLeftExit(4,6);
+		}
+		else{
+			nxtDisplayTextLine(1, "dere-dere");
+			goRightExit(5,6);
+		}
 	}
 	else if(foundOther){
-		nxtDisplayTextLine(1, "derecha");
-		float th=planPath(0,4,6,6,7);
-		nxtDisplayTextLine(1,"%f",th);
-		int move=rotMovement(th,0);
-		align(move);
-		fordward(0.4);
+		if(side==0){
+			nxtDisplayTextLine(1, "izq-dere");
+			goRightExit(4,6);
+		}
+		else{
+			nxtDisplayTextLine(1, "dere-izq");
+			goLeftExit(5,6);
+		}
 	}
 }
