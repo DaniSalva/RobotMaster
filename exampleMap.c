@@ -104,7 +104,6 @@ eraseDisplay();
   float heading = 0;
 
 
-
 	//CAMERA TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	bool continueTracking = true;
   int _nblobs;
