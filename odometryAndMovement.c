@@ -201,7 +201,7 @@ task updateOdometry(){
 		robot_odometry.th = robot_odometry.th + dT;
 		normalizeAngle(robot_odometry.th);
    	robot_odometry.x = robot_odometry.x + dx;
-   	robot_odometry.y = robot_odometry.y + dy;
+   	robot_odometry.y = robot_odometry.y - dy;
    	ReleaseMutex(semaphore_odometry);
 
    	// show each step on screen and write in a file
