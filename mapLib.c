@@ -377,6 +377,34 @@ void drawRobot(float x_mm, float y_mm, float ang_rad){
 
 }
 
+void drawFindBall(int initX, int initY, int foundX, int foundY) {
+	int drawX = initX;
+	int drawY = initY;
+	bool xDone = false;
+	bool yDone = false;
+	while (!xDone || !yDone) {
+		if (initX != foundX) {
+			if (initX < foundX) {
+				drawX++;
+			} else {
+				drawX--;
+			}
+		} else {
+			xDone = true;
+		}
+		if (initY != foundY) {
+			if (initY < foundY) {
+				drawY++;
+			} else {
+				drawY--;
+			}
+		} else {
+			yDone = true;
+		}
+		//drawRobot(drawX, drawY, 0);
+	}
+}
+
 void fillNF1Matrix(int x, int y, int value) {
 
 	int elements = 1;
