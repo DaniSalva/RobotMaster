@@ -206,6 +206,8 @@ eraseDisplay();
   float endY = robot_odometry.y;
   robot_odometry.th = 0;
   ReleaseMutex(semaphore_odometry);
+  float foundBallAuxX = endX;
+  float foundBallAuxY = endY;
 
   float goalY = 1.2;
   float goalX = 0.4;
@@ -255,8 +257,8 @@ eraseDisplay();
   ReleaseMutex(semaphore_odometry);
 
   /********************************************************/
-	/********************EXIT********************************/
-	/********************************************************/
+	/********************EXIT MAZE*************************/
+	/******************************************************/
 
   //TODO: this for different maps
 	findExit(GREEN,BLUE);
@@ -264,6 +266,27 @@ eraseDisplay();
 	StopTask(updateOdometry);
 
   Close(hFileHandle, nIoResult);
+
+
+  
+ 
+ 	nxtDisplayTextLine(3, "x %f", foundBallAuxX);
+ 	nxtDisplayTextLine(4, "y %f",foundBallAuxY);
+ 	float columnX = foundBallAuxX / 0.4;
+ 	float columnY = foundBallAuxY / 0.4;
+ 
+ 	int newYcolumn = 0;
+ 	if (columnY > 0) {
+ 		newYcolumn = (int)(columnY+0.5);
+ 	} else {
+ 		newYcolumn = (int)(columnY-0.5);
+ 	}
+ 	int newXcolumn = (int)(columnX+0.5);
+ 	int foundBallX =newXcolumn + 3;
+ 	int foundBallY = newYcolumn + 3;
+ 	nxtDisplayTextLine(5, "x %d y %d", newYcolumn, newXcolumn;
+ 	nxtDisplayTextLine(6, "%f", heading);
+ 	drawFindBall(3,3,foundBallX, foundBallY);
 
   wait1Msec(60000);
 }
