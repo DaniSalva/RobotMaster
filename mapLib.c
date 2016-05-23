@@ -495,7 +495,6 @@ float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
 			}
 		}
 
-
 		switch(direction){
 		case 0: th = 0; break;
 		case 2: th = -(PI/2);break;
