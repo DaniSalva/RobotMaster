@@ -54,36 +54,36 @@ int color = 0;
 /*************STEP: SELECT COLOR AND MAP*****************/
 /********************************************************/
 int light = LSvalNorm(lightSensor);
-light = 10; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+light = 30; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 if(light < 18)  // If the Light Sensor reads a value less than 45:
 {
-  nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
+  //nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
   mp = "mapaB.txt";
   color = 1;
 }
 else                               // If the Light Sensor reads a value greater than or equal to 45:
 {
-  nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
+  //nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
   mp = "mapaA.txt";
   color = 0;
 }
 
 if(	loadMap(mp,connectionsMatrix[0][0]) ){
-  nxtDisplayTextLine(6, "Mapa loaded ok");
+  //nxtDisplayTextLine(6, "Mapa loaded ok");
 }else{
-  nxtDisplayTextLine(6, "Mapa NOT loaded");
+  //nxtDisplayTextLine(6, "Mapa NOT loaded");
 }
 
-/*drawMap();
-th=-pi/4 + (20*PI)/180;
-for (x=50; x<sizeX*sizeCell; x=x+200){
+drawMap();
+/*th=-pi/4 + (20*PI)/180;
+for (x=50; x<sizeX*sizeCell; x=x+400){
   th=th+PI/4;
-  for (y=50; y<sizeY*sizeCell; y=y+200){
+  for (y=50; y<sizeY*sizeCell; y=y+400){
         drawRobot(x,y,th);
         wait1Msec(100);
   }
 }*/
-eraseDisplay();
+//eraseDisplay();
 
 // reset odometry values and motor encoders.
   nMotorEncoder[motorC] = 0;
@@ -97,8 +97,8 @@ eraseDisplay();
 	/********************************************************/
 	StartTask(updateOdometry);
 	if (color == 0) {
-		planPath(PI,1,7,1,3);
-		planPath((PI/2),1,3,3,3);
+		//planPath(PI,1,7,1,3);
+		//planPath((PI/2),1,3,3,3);
 	} else {
 		//planPath(PI,5,7,5,3);
 		planPath(-(PI/2),5,3,3,3);
@@ -139,7 +139,7 @@ eraseDisplay();
 
 		// Get the blobs from the camera into the array
 		 _nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
-		 nxtDisplayTextLine(6, "%d", _nblobs);
+		 //nxtDisplayTextLine(6, "%d", _nblobs);
 
 		 // Select blob of COLOR to be tracked
 		 int found = 0;
@@ -148,14 +148,14 @@ eraseDisplay();
 
      	if (_blobs[i].colour == RED /*&& _blobs[i].size > AREA_COLOR*/) {
      		found = 1;
-     		nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
-     		nxtDisplayTextLine(5, "%d", _blobs[i].size);
+     		//nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
+     		//nxtDisplayTextLine(5, "%d", _blobs[i].size);
      		float w = alignToBall((_blobs[i].x1 + _blobs[i].x2)/2);
      		//Todo: if w is too big v = 0;
 	     	float v = speedToBall(_blobs[i].size);
 	     	setSpeed(v, w);
 	     	if (_blobs[i].size > DESIRED_AREA) {
-	     		nxtDisplayTextLine(3, "stop tracking");
+	     		//nxtDisplayTextLine(3, "stop tracking");
 	     		continueTracking = 0;
 	     	}
      	}
@@ -163,7 +163,7 @@ eraseDisplay();
      }
 
      if (!found) {
-				nxtDisplayTextLine(3, "not found");
+				//nxtDisplayTextLine(3, "not found");
 				wait1Msec(300);
 				if (color == 0) {
 					setSpeed(0, -0.5);
@@ -260,21 +260,10 @@ eraseDisplay();
 	/********************EXIT MAZE*************************/
 	/******************************************************/
 
-  //TODO: this for different maps
-	findExit(GREEN,BLUE);
 
-	StopTask(updateOdometry);
-
-  Close(hFileHandle, nIoResult);
-
-
-  
- 
- 	nxtDisplayTextLine(3, "x %f", foundBallAuxX);
- 	nxtDisplayTextLine(4, "y %f",foundBallAuxY);
  	float columnX = foundBallAuxX / 0.4;
  	float columnY = foundBallAuxY / 0.4;
- 
+
  	int newYcolumn = 0;
  	if (columnY > 0) {
  		newYcolumn = (int)(columnY+0.5);
@@ -282,11 +271,26 @@ eraseDisplay();
  		newYcolumn = (int)(columnY-0.5);
  	}
  	int newXcolumn = (int)(columnX+0.5);
- 	int foundBallX =newXcolumn + 3;
- 	int foundBallY = newYcolumn + 3;
- 	nxtDisplayTextLine(5, "x %d y %d", newYcolumn, newXcolumn;
- 	nxtDisplayTextLine(6, "%f", heading);
- 	drawFindBall(3,3,foundBallX, foundBallY);
+ 	int foundBallX =newYcolumn + 3;
+ 	int foundBallY = newXcolumn + 3;
+ 	//nxtDisplayTextLine(6, "%f", heading);
+ 	//drawFindBall(3,3,foundBallX, foundBallY);
+ 	drawRobot(foundBallX*400,foundBallY*400,0);
+ 	drawRobot(foundBallX*400,foundBallY*400,PI);
+ 	drawRobot(foundBallX*400,foundBallY*400,-(PI/2));
+ 	drawRobot(foundBallX*400,foundBallY*400,PI/2);
+ 	/*if (color == 0) {
+ 		drawFindBall(foundBallX, foundBallY, 4, 6);
+	} else {
+		drawFindBall(foundBallX, foundBallY, 2, 6);
+	}*/
+
+	//TODO: this for different maps
+	findExit(GREEN,BLUE, 0);
+
+	StopTask(updateOdometry);
+
+  Close(hFileHandle, nIoResult);
 
   wait1Msec(60000);
 }

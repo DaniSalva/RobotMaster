@@ -36,8 +36,8 @@ int setSpeed(float v, float w)
 
   motorPowerRight = m * w_r - n;
   motorPowerLeft = m * w_l - n;
-  nxtDisplayTextLine(6, "%f", motorPowerLeft);
-  nxtDisplayTextLine(7, "%f", motorPowerRight);
+  //nxtDisplayTextLine(6, "%f", motorPowerLeft);
+  //nxtDisplayTextLine(7, "%f", motorPowerRight);
 
 	//System critic section
   hogCPU();

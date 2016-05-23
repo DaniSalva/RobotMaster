@@ -140,7 +140,7 @@ bool readLineHeader(TFileHandle hFileHandle,TFileIOResult nIoResult, int & dimX,
 				endfile=true;
 
 				}else{
-				nxtDisplayTextLine(1, "PROBLEM READING map");
+				//nxtDisplayTextLine(1, "PROBLEM READING map");
 			}
 		}
 	}
@@ -199,7 +199,7 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 						//indNum++;
 						}else{
 						if (onechar=='1'){
-							nxtDisplayTextLine(3, " %d %d", mapCol,mapRow);
+							//nxtDisplayTextLine(3, " %d %d", mapCol,mapRow);
 							connectionsMatrix[mapCol][mapRow]=true;
 						}
 						// else { false} // by default is false
@@ -216,7 +216,7 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 				endfile=true;
 
 				}else{
-				nxtDisplayTextLine(1, "PROBLEM READING map");
+				//nxtDisplayTextLine(1, "PROBLEM READING map");
 			}
 		}
 	}
@@ -234,7 +234,7 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 	numbersRead[indNum]=num;
 	}*/
 
-	nxtDisplayTextLine(3, "%s ", linestring);
+	//nxtDisplayTextLine(3, "%s ", linestring);
 
 	/*for(int j=2; j<=indNum; ++j){
 	setConnection(numbersRead[0], numbersRead[1], numbersRead[j]);
@@ -268,7 +268,7 @@ bool loadMap(string mapFileName, bool &connections)
 
 	OpenRead(hFileHandle, nIoResult, mapFileName, nFileSize);
 	if( nIoResult ==0 ){
-		nxtDisplayTextLine(1, "OPEN OK: %d", nFileSize);
+		//nxtDisplayTextLine(1, "OPEN OK: %d", nFileSize);
 
 		//StringFromChars(sToString, FromChars)
 		//Converts an array of bytes to a string value.  You MUST end your char array with a char value of zero!
@@ -288,7 +288,7 @@ bool loadMap(string mapFileName, bool &connections)
 	}
 	else{
 		loadingOk=false;
-		nxtDisplayTextLine(1, "PROBLEM OPENING file");
+		//nxtDisplayTextLine(1, "PROBLEM OPENING file");
 	}
 
 	return loadingOk;
@@ -359,21 +359,18 @@ void drawRobot(float x_mm, float y_mm, float ang_rad){
 	pixY=celly*pixPerY+pixPerY/2;
 	nxtFillEllipse(pixX-1, pixY+1, pixX+1, pixY-1); //nxtFillEllipse(Left, Top, Right, Bottom);
 
-	//normalizeAngle(ang_rad);
-	ang_grad=radiansToDegrees(ang_rad);
-	if (ang_grad<0){ ang_grad=ang_grad+360;}
-	th=(ang_grad+22.5)/45;
-	while(th>7){th=th-8;}
 
 	//paint orientation
-	if(th==0)		    { nxtDrawLine(pixX,pixY,pixX+2,pixY);		}
-	else if(th==1)	{ nxtDrawLine(pixX,pixY,pixX+2,pixY+2);	}
-	else if(th==2)	{ nxtDrawLine(pixX,pixY,pixX,pixY+2);	  }
-	else if(th==3)	{ nxtDrawLine(pixX,pixY,pixX-2,pixY+2);	}
-	else if(th==4)	{ nxtDrawLine(pixX,pixY,pixX-2,pixY);		}
-	else if(th==5)	{ nxtDrawLine(pixX,pixY,pixX-2,pixY-2);	}
-	else if(th==6)	{ nxtDrawLine(pixX,pixY,pixX,pixY-2);		}
-	else if(th==7)	{ nxtDrawLine(pixX,pixY,pixX+2,pixY-2);	}
+	if(ang_rad==0){
+		nxtDrawLine(pixX,pixY,pixX,pixY-2);
+	}
+	else if(ang_rad>(-1.6) && ang_rad<(-1.5)){
+		nxtDrawLine(pixX,pixY,pixX-2,pixY);
+	}else if(ang_rad<(1.6) && ang_rad>(1.5)){
+		nxtDrawLine(pixX,pixY,pixX+2,pixY);
+		}else if(ang_rad<(3.2) && ang_rad>(3.1)){
+		nxtDrawLine(pixX,pixY,pixX,pixY+2);
+	}
 
 }
 
@@ -401,7 +398,7 @@ void drawFindBall(int initX, int initY, int foundX, int foundY) {
 		} else {
 			yDone = true;
 		}
-		//drawRobot(drawX, drawY, 0);
+		drawRobot(drawX*400, drawY*400, PI);
 	}
 }
 
@@ -454,7 +451,7 @@ void fillNF1Matrix(int x, int y, int value) {
 int rotMovement(float previousDir, float goalth){
 	int move=0;
 	float result= previousDir-goalth;
-	nxtDisplayTextLine(4, "result %f",result);
+	//nxtDisplayTextLine(4, "result %f",result);
 	if(result==0){
 		move=0;
 	}
@@ -476,10 +473,11 @@ int rotMovement(float previousDir, float goalth){
 
 // go from CURRENT position (odometry) to (middle??) of cell (cellX, cellY)
 bool go(int cellX, int cellY, float previousDir, float th, int x, int y, int x_end, int y_end){
-	nxtDisplayTextLine(3, "%d %d", cellX, cellY);
+	drawRobot(cellX*400,cellY*400,th);
+
 
 	int move =rotMovement(previousDir,th);
-	nxtDisplayTextLine(6, "Move %d",move);
+	//nxtDisplayTextLine(6, "Move %d",move);
 	align(move);
 	if(SensorValue(SONAR) < SONAR_THRES){
 		return false;
@@ -507,7 +505,7 @@ float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
 	fillNF1Matrix(x_end, y_end, 0);
 
 	int heuristica = nf1Matrix[x_ini][y_ini];
-	nxtDisplayTextLine(3, "%d", heuristica);
+	//nxtDisplayTextLine(3, "%d", heuristica);
 
 
 	while(heuristica != 0) {
@@ -530,7 +528,7 @@ float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
 		case 4: th = PI; break;
 		case 6: th = PI/2; break;
 		}
-		nxtDisplayTextLine(5, "Direction %f",th);
+		//nxtDisplayTextLine(5, "Direction %f",th);
 		bool update = go(nextNeighbourX, nextNeighbourY, previousDir, th, x, y, x_end, y_end);
 		previousDir=th;
 
@@ -567,7 +565,7 @@ void goToClosestExit(float thinit,int xpos, int ypos,int xleft, int yleft,int xr
 
 void goRightExit(int x, int y){
 	float th=planPath(0,x,y,6,7);
-	nxtDisplayTextLine(1,"%f",th);
+	//nxtDisplayTextLine(1,"%f",th);
 	int move=rotMovement(th,0);
 	align(move);
 	fordward(0.4);
@@ -575,7 +573,7 @@ void goRightExit(int x, int y){
 
 void goLeftExit(int x, int y){
 	float th=planPath(0,x,y,3,7);
-	nxtDisplayTextLine(1, "%f",th);
+	//nxtDisplayTextLine(1, "%f",th);
 	int move=rotMovement(th,0);
 	align(move);
 	fordward(0.4)
@@ -614,43 +612,43 @@ void findExit(int goalColor, int otherColor,int side){
 	if(foundGoal && foundOther){
 		if(centerGoal>centerOther){
 			if(side==0){
-				nxtDisplayTextLine(1, "izq-dere");
+				//nxtDisplayTextLine(1, "izq-dere");
 				goRightExit(4,6);
 			}
 			else{
-				nxtDisplayTextLine(1, "dere-dere");
+				//nxtDisplayTextLine(1, "dere-dere");
 				goRightExit(5,6);
 			}
 
 		}
 		else{
 			if(side==0){
-				nxtDisplayTextLine(1, "izq-izq");
+				//nxtDisplayTextLine(1, "izq-izq");
 				goLeftExit(4,6);
 			}
 			else{
-				nxtDisplayTextLine(1, "dere-izq");
+				//nxtDisplayTextLine(1, "dere-izq");
 				goLeftExit(5,6);
 			}
 		}
 	}
 	else if(foundGoal){
 		if(side==0){
-			nxtDisplayTextLine(1, "izq-izq");
+			//nxtDisplayTextLine(1, "izq-izq");
 			goLeftExit(4,6);
 		}
 		else{
-			nxtDisplayTextLine(1, "dere-dere");
+			//nxtDisplayTextLine(1, "dere-dere");
 			goRightExit(5,6);
 		}
 	}
 	else if(foundOther){
 		if(side==0){
-			nxtDisplayTextLine(1, "izq-dere");
+			//nxtDisplayTextLine(1, "izq-dere");
 			goRightExit(4,6);
 		}
 		else{
-			nxtDisplayTextLine(1, "dere-izq");
+			//nxtDisplayTextLine(1, "dere-izq");
 			goLeftExit(5,6);
 		}
 	}
