@@ -426,7 +426,6 @@ void fillNF1Matrix(int x, int y, int value) {
 int rotMovement(float previousDir, float goalth){
 	int move=0;
 	float result= previousDir-goalth;
-	nxtDisplayTextLine(4, "result %f",result);
 	if(result==0){
 		move=0;
 	}
@@ -447,24 +446,21 @@ int rotMovement(float previousDir, float goalth){
 }
 
 // go from CURRENT position (odometry) to (middle??) of cell (cellX, cellY)
-bool go(int cellX, int cellY, float previousDir, float th, int x, int y, int x_end, int y_end){
-	nxtDisplayTextLine(3, "%d %d", cellX, cellY);
+bool go(int cellX, int cellY, float previousDir, float th, int x, int y, int x_end, int y_end, bool replan){
 
 	int move =rotMovement(previousDir,th);
-	nxtDisplayTextLine(6, "Move %d",move);
 	align(move);
 	if(SensorValue(SONAR) < SONAR_THRES){
 		return false;
 	}
 	else{
-		fordward(0.4);
+		fordwardSonar(0.4,true);
 		return true;
 	}
 
 }
 
-
-float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
+float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end, bool replan){
 	// Store in pathX and pathY respectively the coordinates of all the cells that the robot has to cross to reach the goal.
 	int x = x_ini;
 	int y = y_ini;
@@ -479,8 +475,6 @@ float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
 	fillNF1Matrix(x_end, y_end, 0);
 
 	int heuristica = nf1Matrix[x_ini][y_ini];
-	nxtDisplayTextLine(3, "%d", heuristica);
-
 
 	while(heuristica != 0) {
 		for(int i = 0; i < 8; i = i + 2) {
@@ -501,8 +495,7 @@ float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
 		case 4: th = PI; break;
 		case 6: th = PI/2; break;
 		}
-		nxtDisplayTextLine(5, "Direction %f",th);
-		bool update = go(nextNeighbourX, nextNeighbourY, previousDir, th, x, y, x_end, y_end);
+		bool update = go(nextNeighbourX, nextNeighbourY, previousDir, th, x, y, x_end, y_end,replan);
 		previousDir=th;
 
 		if (update) {
@@ -513,6 +506,7 @@ float planPath(float previousDir,int x_ini, int y_ini, int x_end, int y_end){
 			deleteConnection(x, y, direction);
 			initNF1();
 			fillNF1Matrix(x_end, y_end, 0);
+			drawMap();
 			heuristica = nf1Matrix[x_ini][y_ini];
 		}
 	}
@@ -527,34 +521,63 @@ float euclidianDistance(int x_1,int y_1, int x_2, int y_2){
 void goToClosestExit(float thinit,int xpos, int ypos,int xleft, int yleft,int xright, int yright){
 	float th=0;
 	if(euclidianDistance(xpos,ypos,xleft,yleft)< euclidianDistance(xpos,ypos,xright,yright)){
-		th=planPath(thinit,xpos,ypos,xleft,yleft);
+		th=planPath(thinit,xpos,ypos,xleft,yleft,false);
 	}
 	else{
-		th=planPath(thinit,xpos,ypos,xright,yright);
+		th=planPath(thinit,xpos,ypos,xright,yright,false);
 	}
 	int move=rotMovement(th,0);
 	align(move);
 }
 
-void goRightExit(int x, int y){
-	float th=planPath(0,x,y,6,7);
-	nxtDisplayTextLine(1,"%f",th);
+void goRightExit(int x, int y,int exit_xr,int exit_yr){
+	float th=planPath(0,x,y,exit_xr,exit_yr,false);
 	int move=rotMovement(th,0);
 	align(move);
 	fordward(0.4);
 }
 
-void goLeftExit(int x, int y){
-	float th=planPath(0,x,y,3,7);
-	nxtDisplayTextLine(1, "%f",th);
+void goLeftExit(int x, int y,int exit_xl,int exit_yl){
+	float th=planPath(0,x,y,exit_xl,exit_yl,false);
 	int move=rotMovement(th,0);
 	align(move);
-	fordward(0.4)
+	fordward(0.4);
 }
 
 //side: 0 izquierda, 1 derecha
 void findExit(int goalColor, int otherColor,int side){
+	int exit_x_left=0;
+	int exit_y_left=0;
+	int exit_x_right=0;
+	int exit_y_right=0;
 
+	int start_x_left=0;
+	int start_y_left=0;
+	int start_x_right=0;
+	int start_y_right=0;
+
+	if(side==0){
+		exit_x_left=3;
+		exit_y_left=7;
+		exit_x_right=5;
+		exit_y_right=7;
+
+		start_x_left=4;
+		start_y_left=6;
+		start_x_right=5;
+		start_y_right=6;
+	}
+	else{
+		exit_x_left=0;
+		exit_y_left=7;
+		exit_x_right=3;
+		exit_y_right=7;
+
+		start_x_left=1;
+		start_y_left=6;
+		start_x_right=2;
+		start_y_right=6;
+	}
 	int _nblobs;
 	int foundGoal=0;
 	double centerGoal=0;
@@ -586,43 +609,43 @@ void findExit(int goalColor, int otherColor,int side){
 		if(centerGoal>centerOther){
 			if(side==0){
 				nxtDisplayTextLine(1, "izq-dere");
-				goRightExit(4,6);
+				goRightExit(start_x_left,start_y_left,exit_x_right,exit_y_right);
 			}
 			else{
 				nxtDisplayTextLine(1, "dere-dere");
-				goRightExit(5,6);
+				goRightExit(start_x_right,start_y_right,exit_x_right,exit_y_right);
 			}
 
 		}
 		else{
 			if(side==0){
 				nxtDisplayTextLine(1, "izq-izq");
-				goLeftExit(4,6);
+				goLeftExit(start_x_left,start_y_left,exit_x_left,exit_y_left);
 			}
 			else{
 				nxtDisplayTextLine(1, "dere-izq");
-				goLeftExit(5,6);
+				goLeftExit(start_x_right,start_y_right,exit_x_left,exit_y_left);
 			}
 		}
 	}
 	else if(foundGoal){
 		if(side==0){
 			nxtDisplayTextLine(1, "izq-izq");
-			goLeftExit(4,6);
+			goLeftExit(start_x_left,start_y_left,exit_x_left,exit_y_left);
 		}
 		else{
 			nxtDisplayTextLine(1, "dere-dere");
-			goRightExit(5,6);
+			goRightExit(start_x_right,start_y_right,exit_x_right,exit_y_right);
 		}
 	}
 	else if(foundOther){
 		if(side==0){
 			nxtDisplayTextLine(1, "izq-dere");
-			goRightExit(4,6);
+			goRightExit(start_x_left,start_y_left,exit_x_right,exit_y_right);
 		}
 		else{
 			nxtDisplayTextLine(1, "dere-izq");
-			goLeftExit(5,6);
+			goLeftExit(start_x_right,start_y_right,exit_x_left,exit_y_left);
 		}
 	}
 }

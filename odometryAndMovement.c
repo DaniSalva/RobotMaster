@@ -6,6 +6,8 @@
 float R=0.028; // m
 float L=0.11; // m
 
+#define SONAR_T 30
+
 int gyroR=94;
 int gyroL=87;
 
@@ -156,8 +158,18 @@ void fordward(float distance) {
 	setSpeed(0.1,0);
 	wait1Msec(4000);
 	setSpeed(0,0);
+}
 
-
+void fordwardSonar(float distance,int sonarEnabled) {
+	time1[T1] = 0;
+	setSpeed(0.1,0);
+	int sonarValue=100;
+	while(sonarValue>=SONAR_T && time1[T1]<distance*10000){
+		if(sonarEnabled){
+			sonarValue=SensorValue(SONAR);
+		}
+	}
+	setSpeed(0,0);
 }
 
 // TASK TO BE LAUNCHED SIMULTANEOUSLY to "main"!!
