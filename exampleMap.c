@@ -45,7 +45,7 @@ task main(){
 	/*************STEP: SELECT COLOR AND MAP*****************/
 	/********************************************************/
 	int light = LSvalNorm(lightSensor);
-	light = 20; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	light = 12; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(light < 10)  // If the Light Sensor reads a value less than 45:
 	{
 		nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
@@ -83,14 +83,63 @@ task main(){
 	robot_odometry.x = 0;
 	robot_odometry.y = 0;
 
+	float rotSpeed = 0;
+	float heading = 0;
+
 	/********************************************************/
 	/*************ZIG ZAG AND GO TO BALL ROOM****************/
 	/********************************************************/
 	StartTask(updateOdometry);
 	if (color == 0) {
+		align(1);
+    wait1Msec(10);
+    time1[T1] = 0;
+    setSpeed(0.2,0.5);
+    while(time1[T1] < 6500) {
+	    rotSpeed = HTGYROreadRot(HTGYRO);
+			heading += rotSpeed * 500 * 0.001;
+			wait1Msec(500);
+		}
+		nxtDisplayTextLine(2, "heading %f", heading);
+    setSpeed(0,0);
+    wait1Msec(10);
+    time1[T1] = 0;
+    setSpeed(0.20,-0.55);
+    while(time1[T1] < 5400) {
+	    rotSpeed = HTGYROreadRot(HTGYRO);
+			heading += rotSpeed * 100 * 0.001;
+			wait1Msec(100);
+		}
+		time1[T1] = 0;
+    setSpeed(0,0);
+    nxtDisplayTextLine(2, "heading %f", heading);
+    align2(heading);
 		//planPath(PI,1,7,1,3,true);
-		//planPath((PI/2),1,3,3,3,true);
+		planPath((PI/2),1,3,3,3,true);
 		} else {
+			align(-1);
+	    wait1Msec(10);
+	    time1[T1] = 0;
+	    setSpeed(0.2,-0.5);
+	    while(time1[T1] < 6500) {
+		    rotSpeed = HTGYROreadRot(HTGYRO);
+				heading += rotSpeed * 500 * 0.001;
+				wait1Msec(500);
+			}
+			nxtDisplayTextLine(2, "heading %f", heading);
+	    setSpeed(0,0);
+	    wait1Msec(10);
+	    time1[T1] = 0;
+	    setSpeed(0.20,0.55);
+	    while(time1[T1] < 5400) {
+		    rotSpeed = HTGYROreadRot(HTGYRO);
+				heading += rotSpeed * 100 * 0.001;
+				wait1Msec(100);
+			}
+			time1[T1] = 0;
+	    setSpeed(0,0);
+	    nxtDisplayTextLine(2, "heading %f", heading);
+	    //align2(heading);
 		//planPath(PI,5,7,5,3,true);
 		//planPath(-(PI/2),5,3,3,3,true);
 	}
@@ -99,8 +148,8 @@ task main(){
 	/*******************FIND BALL****************************/
 	/********************************************************/
 
-	float rotSpeed = 0;
-	float heading = 0;
+	rotSpeed = 0;
+	heading = 0;
 
 	bool continueTracking = true;
 	int _nblobs;
