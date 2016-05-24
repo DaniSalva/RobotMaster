@@ -9,7 +9,7 @@ float L=0.11; // m
 #define SONAR_T 30
 
 int gyroR=94;
-int gyroL=87;
+int gyroL=86;
 
 TPosition robot_odometry;       // WE SHOULD ACCESS THIS VARIABLE with a "semaphore".
 TMutex semaphore_odometry = 0;  // Important to initialize to zero!!! Not acquired.

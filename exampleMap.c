@@ -8,9 +8,6 @@
 #include "drivers/mindsensors-nxtcam.h"
 
 // CONFIG camera color position
-#define GREEN 1
-#define BLUE 2
-#define RED 0
 
 // CONFIG GOAL PARAMETERS
 #define GOAL_COLOR RED
@@ -48,7 +45,7 @@ task main(){
 	/*************STEP: SELECT COLOR AND MAP*****************/
 	/********************************************************/
 	int light = LSvalNorm(lightSensor);
-	light = 7; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	light = 20; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(light < 10)  // If the Light Sensor reads a value less than 45:
 	{
 		nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
@@ -91,11 +88,11 @@ task main(){
 	/********************************************************/
 	StartTask(updateOdometry);
 	if (color == 0) {
-		planPath(PI,1,7,1,3,true);
-		planPath((PI/2),1,3,3,3,true);
+		//planPath(PI,1,7,1,3,true);
+		//planPath((PI/2),1,3,3,3,true);
 		} else {
-		planPath(PI,5,7,5,3,true);
-		planPath(-(PI/2),5,3,3,3,true);
+		//planPath(PI,5,7,5,3,true);
+		//planPath(-(PI/2),5,3,3,3,true);
 	}
 
 	/********************************************************/
@@ -214,7 +211,7 @@ task main(){
 	}
 	setSpeed(0,0);
 	if(endY > goalX) {
-		align2(90);
+		align(-1);
 		while (endY > goalX) {
 			setSpeed(0.15,0);
 			wait1Msec(100);
@@ -223,9 +220,9 @@ task main(){
 			ReleaseMutex(semaphore_odometry);
 		}
 		setSpeed(0,0);
-		align2(-90);
+		align(1);
 		} else {
-		align2(-90);
+		align(1);
 		while (endY < goalX) {
 			setSpeed(0.15,0);
 			wait1Msec(100);
@@ -234,7 +231,7 @@ task main(){
 			ReleaseMutex(semaphore_odometry);
 		}
 		setSpeed(0,0);
-		align2(90);
+		align(-1);
 	}
 
 	//Reset proper odometry
@@ -248,7 +245,7 @@ task main(){
 	/********************EXIT********************************/
 	/********************************************************/
 
-	findExit(GREEN,BLUE,color);
+	findExit(color);
 
 	StopTask(updateOdometry);
 

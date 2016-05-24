@@ -15,6 +15,10 @@ int pixPerY;
 #define MAX_Y 8
 #define SONAR_THRES 40
 
+#define RED 0
+#define GREEN 1
+#define BLUE 2
+
 bool connectionsMatrix[2*MAX_X+1][2*MAX_Y+1];
 int nf1Matrix[MAX_X][MAX_Y];
 int pathX[MAX_X*MAX_Y];
@@ -545,7 +549,7 @@ void goLeftExit(int x, int y,int exit_xl,int exit_yl){
 }
 
 //side: 0 izquierda, 1 derecha
-void findExit(int goalColor, int otherColor,int side){
+void findExit(int side){
 	int exit_x_left=0;
 	int exit_y_left=0;
 	int exit_x_right=0;
@@ -556,16 +560,21 @@ void findExit(int goalColor, int otherColor,int side){
 	int start_x_right=0;
 	int start_y_right=0;
 
+	int goalColor;
+	int otherColor;
+
 	if(side==0){
 		exit_x_left=3;
 		exit_y_left=7;
-		exit_x_right=5;
+		exit_x_right=6;
 		exit_y_right=7;
 
 		start_x_left=4;
 		start_y_left=6;
 		start_x_right=5;
 		start_y_right=6;
+		goalColor=BLUE;
+		otherColor=GREEN;
 	}
 	else{
 		exit_x_left=0;
@@ -577,12 +586,14 @@ void findExit(int goalColor, int otherColor,int side){
 		start_y_left=6;
 		start_x_right=2;
 		start_y_right=6;
+		goalColor=GREEN;
+		otherColor=BLUE;
 	}
 	int _nblobs;
-	int foundGoal=0;
+	bool foundGoal=false;
 	double centerGoal=0;
 	double centerOther=0;
-	int foundOther=0;
+	bool foundOther=false;
 	blob_array _blobs;
 	bool _condensed = true;
 	// Initialise the camera
@@ -592,59 +603,90 @@ void findExit(int goalColor, int otherColor,int side){
 	_nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
 	centerGoal=0;
 	centerOther=0;
-	foundGoal=0;
-	foundOther=0;
+	foundGoal=false;
+	foundOther=false;
 	for (int i = 0; i < _nblobs; i++) {
 		if (_blobs[i].colour ==  goalColor){
-			foundGoal = 1;
+			foundGoal = true;
 			double centerGoal=(_blobs[i].x1 + _blobs[i].x2)/2;
 		}
 		else if (_blobs[i].colour ==  otherColor){
-			foundOther=1;
+			foundOther=true;
 			double centerOther=(_blobs[i].x1 + _blobs[i].x2)/2;
 		}
 	}
+	if(!(foundGoal || foundOther)){
+		while(!foundGoal && !foundOther){
+			_nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
+			centerGoal=0;
+			centerOther=0;
+			foundGoal=false;
+			foundOther=false;
+			for (int i = 0; i < _nblobs; i++) {
+				if (_blobs[i].colour ==  goalColor){
+					foundGoal = true;
+					double centerGoal=(_blobs[i].x1 + _blobs[i].x2)/2;
+				}
+				else if (_blobs[i].colour ==  otherColor){
+					foundOther=true;
+					double centerOther=(_blobs[i].x1 + _blobs[i].x2)/2;
+				}
+			}
+			if (!foundGoal && !foundOther) {
 
+
+				wait1Msec(300);
+				if (side == 0) {
+					setSpeed(0, -0.5);
+					} else {
+					setSpeed(0, 0.5);
+				}
+			}
+		}
+	}
+	nxtDisplayTextLine(2, "goal %f",centerGoal);
+	nxtDisplayTextLine(3, "other %f",centerOther);
+	setSpeed(0, 0);
 	if(foundGoal && foundOther){
-		if(centerGoal>centerOther){
+		if(centerGoal<centerOther){
 			if(side==0){
-				nxtDisplayTextLine(1, "izq-dere");
+				nxtDisplayTextLine(1, "2 izq-dere");
 				goRightExit(start_x_left,start_y_left,exit_x_right,exit_y_right);
 			}
 			else{
-				nxtDisplayTextLine(1, "dere-dere");
+				nxtDisplayTextLine(1, "2 dere-dere");
 				goRightExit(start_x_right,start_y_right,exit_x_right,exit_y_right);
 			}
 
 		}
 		else{
 			if(side==0){
-				nxtDisplayTextLine(1, "izq-izq");
+				nxtDisplayTextLine(1, "2 izq-izq");
 				goLeftExit(start_x_left,start_y_left,exit_x_left,exit_y_left);
 			}
 			else{
-				nxtDisplayTextLine(1, "dere-izq");
+				nxtDisplayTextLine(1, "2 dere-izq");
 				goLeftExit(start_x_right,start_y_right,exit_x_left,exit_y_left);
 			}
 		}
 	}
 	else if(foundGoal){
 		if(side==0){
-			nxtDisplayTextLine(1, "izq-izq");
+			nxtDisplayTextLine(1, "1 izq-izq");
 			goLeftExit(start_x_left,start_y_left,exit_x_left,exit_y_left);
 		}
 		else{
-			nxtDisplayTextLine(1, "dere-dere");
+			nxtDisplayTextLine(1, "1 dere-dere");
 			goRightExit(start_x_right,start_y_right,exit_x_right,exit_y_right);
 		}
 	}
 	else if(foundOther){
 		if(side==0){
-			nxtDisplayTextLine(1, "izq-dere");
+			nxtDisplayTextLine(1, "1 izq-dere");
 			goRightExit(start_x_left,start_y_left,exit_x_right,exit_y_right);
 		}
 		else{
-			nxtDisplayTextLine(1, "dere-izq");
+			nxtDisplayTextLine(1, "1 dere-izq");
 			goLeftExit(start_x_right,start_y_right,exit_x_left,exit_y_left);
 		}
 	}
