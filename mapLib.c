@@ -380,8 +380,8 @@ void drawFindBall(int initX, int initY, int foundX, int foundY) {
 	bool xDone = false;
 	bool yDone = false;
 	while (!xDone || !yDone) {
-		if (initX != foundX) {
-			if (initX < foundX) {
+		if (drawX != foundX) {
+			if (drawX < foundX) {
 				drawX++;
 			} else {
 				drawX--;
@@ -389,8 +389,8 @@ void drawFindBall(int initX, int initY, int foundX, int foundY) {
 		} else {
 			xDone = true;
 		}
-		if (initY != foundY) {
-			if (initY < foundY) {
+		if (drawY != foundY) {
+			if (drawY < foundY) {
 				drawY++;
 			} else {
 				drawY--;
@@ -398,7 +398,7 @@ void drawFindBall(int initX, int initY, int foundX, int foundY) {
 		} else {
 			yDone = true;
 		}
-		drawRobot(drawX*400, drawY*400, PI);
+		drawRobot(drawX*400, drawY*400, 0);
 	}
 }
 
