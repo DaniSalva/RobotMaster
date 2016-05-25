@@ -27,28 +27,26 @@ int nFileSize           = 9000;
 int setSpeed(float v, float w)
 {
 
-// start the motors so that the robot gets v m/s linear speed and w RADIAN/s angular speed
+	// start the motors so that the robot gets v m/s linear speed and w RADIAN/s angular speed
 
-  float w_l =1, w_r=1;	//velocidad angular de cada rueda
-  float m = 6.095277901134592;
-  float n = 0.15899967782102523;
-  float motorPowerRight, motorPowerLeft;	//power al motor izquierdo y derecho
+	float w_l =1, w_r=1;	//velocidad angular de cada rueda
+	float m = 6.095277901134592;
+	float n = 0.15899967782102523;
+	float motorPowerRight, motorPowerLeft;	//power al motor izquierdo y derecho
 
-  w_r = ((1/R) * v) + L/(2*R) * w;
-  w_l = 1/R * v - L/(2*R) * w;
+	w_r = ((1/R) * v) + L/(2*R) * w;
+	w_l = 1/R * v - L/(2*R) * w;
 
-  motorPowerRight = m * w_r - n;
-  motorPowerLeft = m * w_l - n;
-  nxtDisplayTextLine(6, "%f", motorPowerLeft);
-  nxtDisplayTextLine(7, "%f", motorPowerRight);
+	motorPowerRight = m * w_r - n;
+	motorPowerLeft = m * w_l - n;
 
 	//System critic section
-  hogCPU();
-  motor[motorA] = motorPowerRight;
-  motor[motorC] = motorPowerLeft;
-  releaseCPU();
+	hogCPU();
+	motor[motorA] = motorPowerRight;
+	motor[motorC] = motorPowerLeft;
+	releaseCPU();
 
-  return 1;
+	return 1;
 }
 
 void align(int angle) {
@@ -79,34 +77,34 @@ void align(int angle) {
 	//	}
 	//}
 	if(angle!=0){ //0=not change direction
-				//Init Gyro
+		//Init Gyro
 		float rotSpeed = 0;
-	  float heading = 0;
-	  time1[T1] = 0;
-	  int gyroRot=90;
+		float heading = 0;
+		time1[T1] = 0;
+		int gyroRot=90;
 
-	  HTGYROstartCal(HTGYRO);
+		HTGYROstartCal(HTGYRO);
 
 		if(angle <0) { //Left
 			setSpeed(0, 0.6);
 			gyroRot=gyroL*angle; //rot 90 or 180
-		} else {					//Right
+			} else {					//Right
 			setSpeed(0, -0.6);
 			gyroRot=gyroR*angle;
 		}
 
 		while (abs(heading)<abs(gyroRot))
-	  {
-	    // Wait until 20ms has passed
-	    while (time1[T1] < 20)
-	      wait1Msec(1);
+		{
+			// Wait until 20ms has passed
+			while (time1[T1] < 20)
+				wait1Msec(1);
 
-	    // Reset the timer
-	    time1[T1]=0;
+			// Reset the timer
+			time1[T1]=0;
 
 
-	    rotSpeed = HTGYROreadRot(HTGYRO);
-	    heading += rotSpeed * 0.02;
+			rotSpeed = HTGYROreadRot(HTGYRO);
+			heading += rotSpeed * 0.02;
 		}
 
 
@@ -117,34 +115,34 @@ void align(int angle) {
 
 void align2(int angle) {
 	if(angle!=0){ //0=not change direction
-				//Init Gyro
+		//Init Gyro
 		float rotSpeed = 0;
-	  float heading = 0;
-	  time1[T1] = 0;
-	  int gyroRot=angle;
+		float heading = 0;
+		time1[T1] = 0;
+		int gyroRot=angle;
 
-	  HTGYROstartCal(HTGYRO);
+		HTGYROstartCal(HTGYRO);
 
 
 
 		if(angle <0) { //Left
 			setSpeed(0, -0.6);
-		} else {					//Right
+			} else {					//Right
 			setSpeed(0, 0.6);
 		}
 
 		while (abs(heading)<abs(gyroRot))
-	  {
-	    // Wait until 20ms has passed
-	    while (time1[T1] < 20)
-	      wait1Msec(1);
+		{
+			// Wait until 20ms has passed
+			while (time1[T1] < 20)
+				wait1Msec(1);
 
-	    // Reset the timer
-	    time1[T1]=0;
+			// Reset the timer
+			time1[T1]=0;
 
 
-	    rotSpeed = HTGYROreadRot(HTGYRO);
-	    heading += rotSpeed * 0.02;
+			rotSpeed = HTGYROreadRot(HTGYRO);
+			heading += rotSpeed * 0.02;
 		}
 
 
@@ -173,72 +171,72 @@ void fordwardSonar(float distance,int sonarEnabled) {
 
 // TASK TO BE LAUNCHED SIMULTANEOUSLY to "main"!!
 task updateOdometry(){
-  float cycle = 0.2 ; // we want to update odometry every ?? s
-  float dS,dx,dy, dT;
-  string sString;
+	float cycle = 0.2 ; // we want to update odometry every ?? s
+	float dS,dx,dy, dT;
+	string sString;
 
-  while (true){
+	while (true){
 
-   short timeAux=nPgmTime;
-	// read tachometers, and estimate how many m. each wheel has moved since last update
-    // RESET tachometer right after to start including the "moved" degrees turned in next iteration
+		short timeAux=nPgmTime;
+		// read tachometers, and estimate how many m. each wheel has moved since last update
+		// RESET tachometer right after to start including the "moved" degrees turned in next iteration
 
-   //System critic section 1
-  	hogCPU();
-   	float degL = nMotorEncoder[motorC];
-   	float degR = nMotorEncoder[motorA];
-   	nMotorEncoder[motorC] = 0;
-   	nMotorEncoder[motorA] = 0;
-   	releaseCPU();
+		//System critic section 1
+		hogCPU();
+		float degL = nMotorEncoder[motorC];
+		float degR = nMotorEncoder[motorA];
+		nMotorEncoder[motorC] = 0;
+		nMotorEncoder[motorA] = 0;
+		releaseCPU();
 
-   	float radL = degL * PI/180;
-   	float radR = degR * PI/180;
+		float radL = degL * PI/180;
+		float radR = degR * PI/180;
 
-   	float w_r = radR/cycle;
-   	float w_l = radL/cycle;
+		float w_r = radR/cycle;
+		float w_l = radL/cycle;
 
-   	float v = (R / 2) * w_r + (R / 2) * w_l;
-   	float w = (R / L) * w_r + (-R / L) * w_l;
+		float v = (R / 2) * w_r + (R / 2) * w_l;
+		float w = (R / L) * w_r + (-R / L) * w_l;
 
-   	//nxtDisplayTextLine(1, "%f" "%f" "%f", nPgmTime, radL, PI/180);
-   	dT = w*cycle;
-   	dS = v * cycle;
+		//nxtDisplayTextLine(1, "%f" "%f" "%f", nPgmTime, radL, PI/180);
+		dT = w*cycle;
+		dS = v * cycle;
 
 
-   	float dx = dS * cos(robot_odometry.th + dT/2);
-   	float dy = dS * sin(robot_odometry.th + dT/2);
+		float dx = dS * cos(robot_odometry.th + dT/2);
+		float dy = dS * sin(robot_odometry.th + dT/2);
 
-   	AcquireMutex(semaphore_odometry);
+		AcquireMutex(semaphore_odometry);
 		robot_odometry.th = robot_odometry.th + dT;
 		normalizeAngle(robot_odometry.th);
-   	robot_odometry.x = robot_odometry.x + dx;
-   	robot_odometry.y = robot_odometry.y - dy;
-   	ReleaseMutex(semaphore_odometry);
+		robot_odometry.x = robot_odometry.x + dx;
+		robot_odometry.y = robot_odometry.y - dy;
+		ReleaseMutex(semaphore_odometry);
 
-   	// show each step on screen and write in a file
+		// show each step on screen and write in a file
 		//nxtDisplayTextLine(2, "ODOMETRY NEW VALUE");
-    	//nxtDisplayTextLine(3, "x,y: %2.2f %2.2f", robot_odometry.x,robot_odometry.y);
-    	//nxtDisplayTextLine(4, "theta: %2.2f ", robot_odometry.th);
-	  	// file ...
-      //StringFormat(sString, "x: %2.2f , y: %2.2f , theta: %2.2f \n",
-      //  robot_odometry.x, robot_odometry.y, robot_odometry.th);
-        StringFormat(sString, "%2.2f ",
-        robot_odometry.x);
-      WriteText(hFileHandle, nIoResult, sString);
-      StringFormat(sString, "%2.2f ",
-        robot_odometry.y);
-      WriteText(hFileHandle, nIoResult, sString);
-      StringFormat(sString, "%2.2f\n",
-        robot_odometry.th);
-      WriteText(hFileHandle, nIoResult, sString);
+		//nxtDisplayTextLine(3, "x,y: %2.2f %2.2f", robot_odometry.x,robot_odometry.y);
+		//nxtDisplayTextLine(4, "theta: %2.2f ", robot_odometry.th);
+		// file ...
+		//StringFormat(sString, "x: %2.2f , y: %2.2f , theta: %2.2f \n",
+		//  robot_odometry.x, robot_odometry.y, robot_odometry.th);
+		StringFormat(sString, "%2.2f ",
+		robot_odometry.x);
+		WriteText(hFileHandle, nIoResult, sString);
+		StringFormat(sString, "%2.2f ",
+		robot_odometry.y);
+		WriteText(hFileHandle, nIoResult, sString);
+		StringFormat(sString, "%2.2f\n",
+		robot_odometry.th);
+		WriteText(hFileHandle, nIoResult, sString);
 
 
 
 
-	 // Wait until cycle is completed?
-	 // ...
-    	wait1Msec(cycle * 1000);
+		// Wait until cycle is completed?
+		// ...
+		wait1Msec(cycle * 1000);
 
-  }
+	}
 
 }

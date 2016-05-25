@@ -203,7 +203,6 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 						//indNum++;
 						}else{
 						if (onechar=='1'){
-							nxtDisplayTextLine(3, " %d %d", mapCol,mapRow);
 							connectionsMatrix[mapCol][mapRow]=true;
 						}
 						// else { false} // by default is false
@@ -238,8 +237,6 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 	numbersRead[indNum]=num;
 	}*/
 
-	nxtDisplayTextLine(3, "%s ", linestring);
-
 	/*for(int j=2; j<=indNum; ++j){
 	setConnection(numbersRead[0], numbersRead[1], numbersRead[j]);
 	nxtDisplayTextLine(4, "%d connection open", numbersRead[j]);
@@ -272,8 +269,6 @@ bool loadMap(string mapFileName, bool &connections)
 
 	OpenRead(hFileHandle, nIoResult, mapFileName, nFileSize);
 	if( nIoResult ==0 ){
-		nxtDisplayTextLine(1, "OPEN OK: %d", nFileSize);
-
 		//StringFromChars(sToString, FromChars)
 		//Converts an array of bytes to a string value.  You MUST end your char array with a char value of zero!
 
@@ -375,7 +370,7 @@ void drawRobot(float x_mm, float y_mm, float ang_rad){
 	}
 	else if(ang_rad>(-1.6) && ang_rad<(-1.5)){
 		nxtDrawLine(pixX,pixY,pixX-2,pixY);
-	}else if(ang_rad<(1.6) && ang_rad>(1.5)){
+		}else if(ang_rad<(1.6) && ang_rad>(1.5)){
 		nxtDrawLine(pixX,pixY,pixX+2,pixY);
 		}else if(ang_rad<(3.2) && ang_rad>(3.1)){
 		nxtDrawLine(pixX,pixY,pixX,pixY+2);
@@ -392,19 +387,19 @@ void drawFindBall(int initX, int initY, int foundX, int foundY) {
 		if (drawX != foundX) {
 			if (drawX < foundX) {
 				drawX++;
-			} else {
+				} else {
 				drawX--;
 			}
-		} else {
+			} else {
 			xDone = true;
 		}
 		if (drawY != foundY) {
 			if (drawY < foundY) {
 				drawY++;
-			} else {
+				} else {
 				drawY--;
 			}
-		} else {
+			} else {
 			yDone = true;
 		}
 		drawRobot(drawX*400, drawY*400, 0);
@@ -648,7 +643,6 @@ void findExit(int side){
 	}
 
 	if(!(foundGoal || foundOther)){
-		nxtDisplayTextLine(1, "NINGUNO");
 		while(!foundGoal && !foundOther){
 			_nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
 			centerGoal=0;
@@ -677,8 +671,6 @@ void findExit(int side){
 			}
 		}
 	}
-	nxtDisplayTextLine(2, "goal %f",centerGoal);
-	nxtDisplayTextLine(3, "other %f",centerOther);
 	setSpeed(0, 0);
 	if(foundGoal && foundOther){
 		if(centerGoal<centerOther){
