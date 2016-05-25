@@ -45,7 +45,7 @@ task main(){
 	/*************STEP: SELECT COLOR AND MAP*****************/
 	/********************************************************/
 	int light = LSvalNorm(lightSensor);
-	if(light < 10)  // If the Light Sensor reads a value less than 45:
+	if(light < 17)  // If the Light Sensor reads a value less than 45:
 	{
 		nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
 		mp = "mapaB.txt";
@@ -95,7 +95,7 @@ task main(){
     wait1Msec(10);
     time1[T1] = 0;
     setSpeed(0.20,-0.55);
-    while(time1[T1] < 5400) {
+    while(time1[T1] < 5500) {
     	wait1Msec(50);
 	    rotSpeed = HTGYROreadRot(HTGYRO);
 			heading += rotSpeed * 50 * 0.001;
@@ -128,7 +128,7 @@ task main(){
 	    wait1Msec(10);
 	    time1[T1] = 0;
 	    setSpeed(0.20,0.55);
-	    while(time1[T1] < 5400) {
+	    while(time1[T1] < 5500) {
 		    rotSpeed = HTGYROreadRot(HTGYRO);
 				heading += rotSpeed * 100 * 0.001;
 				wait1Msec(100);
