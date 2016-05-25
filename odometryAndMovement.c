@@ -8,6 +8,7 @@ float L=0.11; // m
 
 #define SONAR_T 30
 
+
 int gyroR=94;
 int gyroL=86;
 
@@ -85,8 +86,6 @@ void align(int angle) {
 	  int gyroRot=90;
 
 	  HTGYROstartCal(HTGYRO);
-
-
 
 		if(angle <0) { //Left
 			setSpeed(0, 0.6);

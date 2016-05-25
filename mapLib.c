@@ -16,8 +16,8 @@ int pixPerY;
 #define SONAR_THRES 40
 
 #define RED 0
-#define GREEN 1
-#define BLUE 2
+#define GREEN 2
+#define BLUE 1
 
 bool connectionsMatrix[2*MAX_X+1][2*MAX_Y+1];
 int nf1Matrix[MAX_X][MAX_Y];
@@ -606,16 +606,18 @@ void findExit(int side){
 	foundGoal=false;
 	foundOther=false;
 	for (int i = 0; i < _nblobs; i++) {
-		if (_blobs[i].colour ==  goalColor){
+		if ((_blobs[i].colour ==  goalColor) && (_blobs[i].size>200)){
 			foundGoal = true;
 			double centerGoal=(_blobs[i].x1 + _blobs[i].x2)/2;
 		}
-		else if (_blobs[i].colour ==  otherColor){
+		else if ((_blobs[i].colour ==  otherColor) && (_blobs[i].size>200)){
 			foundOther=true;
 			double centerOther=(_blobs[i].x1 + _blobs[i].x2)/2;
 		}
 	}
+
 	if(!(foundGoal || foundOther)){
+		nxtDisplayTextLine(1, "NINGUNO");
 		while(!foundGoal && !foundOther){
 			_nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
 			centerGoal=0;

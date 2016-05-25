@@ -90,15 +90,15 @@ task main(){
 	/*************ZIG ZAG AND GO TO BALL ROOM****************/
 	/********************************************************/
 	StartTask(updateOdometry);
-	if (color == 0) {
+	/*if (color == 0) {
 		align(1);
     wait1Msec(10);
     time1[T1] = 0;
     setSpeed(0.2,0.5);
     while(time1[T1] < 6500) {
+    	wait1Msec(50);
 	    rotSpeed = HTGYROreadRot(HTGYRO);
-			heading += rotSpeed * 500 * 0.001;
-			wait1Msec(500);
+			heading += rotSpeed * 50 * 0.001;
 		}
 		nxtDisplayTextLine(2, "heading %f", heading);
     setSpeed(0,0);
@@ -106,14 +106,14 @@ task main(){
     time1[T1] = 0;
     setSpeed(0.20,-0.55);
     while(time1[T1] < 5400) {
+    	wait1Msec(50);
 	    rotSpeed = HTGYROreadRot(HTGYRO);
-			heading += rotSpeed * 100 * 0.001;
-			wait1Msec(100);
+			heading += rotSpeed * 50 * 0.001;
 		}
 		time1[T1] = 0;
     setSpeed(0,0);
     nxtDisplayTextLine(2, "heading %f", heading);
-    align2(heading);
+    //align2(heading);
 		//planPath(PI,1,7,1,3,true);
 		planPath((PI/2),1,3,3,3,true);
 		} else {
@@ -122,9 +122,10 @@ task main(){
 	    time1[T1] = 0;
 	    setSpeed(0.2,-0.5);
 	    while(time1[T1] < 6500) {
+	    	wait1Msec(100);
 		    rotSpeed = HTGYROreadRot(HTGYRO);
-				heading += rotSpeed * 500 * 0.001;
-				wait1Msec(500);
+				heading += rotSpeed * 100 * 0.001;
+
 			}
 			nxtDisplayTextLine(2, "heading %f", heading);
 	    setSpeed(0,0);
@@ -142,7 +143,7 @@ task main(){
 	    //align2(heading);
 		//planPath(PI,5,7,5,3,true);
 		//planPath(-(PI/2),5,3,3,3,true);
-	}
+	}*/
 
 	/********************************************************/
 	/*******************FIND BALL****************************/
