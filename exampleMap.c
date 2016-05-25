@@ -104,7 +104,13 @@ task main(){
 		time1[T1] = 0;
     setSpeed(0,0);
     nxtDisplayTextLine(2, "heading %f", heading);
-    align2(heading);
+    //align2(heading);
+    //Draw robot in zigzag
+    drawRobot(1*400,7*400,PI/2);
+    drawRobot(0*400,6*400,PI);
+    drawRobot(1*400,5*400,-(PI/2));
+    drawRobot(2*400,4*400,PI);
+    drawRobot(1*400,3*400,PI/2);
 		//planPath(PI,1,7,1,3,true);
 		planPath((PI/2),1,3,3,3,true);
 		} else {
@@ -132,7 +138,13 @@ task main(){
 	    nxtDisplayTextLine(2, "heading %f", heading);
 	    //align2(heading);
 		//planPath(PI,5,7,5,3,true);
-		//planPath(-(PI/2),5,3,3,3,true);
+	  //Draw robot in zigzag
+    drawRobot(5*400,400*7,-(PI/2));
+    drawRobot(6*400,400*6,PI);
+    drawRobot(5*400,400*5,PI/2);
+    drawRobot(4*400,400*4,PI);
+    drawRobot(5*400,400*3,-(PI/2));
+		planPath(-(PI/2),5,3,3,3,true);
 	}
 
 	/********************************************************/
