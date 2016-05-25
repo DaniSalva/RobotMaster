@@ -45,7 +45,6 @@ task main(){
 	/*************STEP: SELECT COLOR AND MAP*****************/
 	/********************************************************/
 	int light = LSvalNorm(lightSensor);
-	light = 12; //REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(light < 10)  // If the Light Sensor reads a value less than 45:
 	{
 		nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
@@ -65,16 +64,7 @@ task main(){
 		nxtDisplayTextLine(6, "Mapa NOT loaded");
 	}
 
-	/*drawMap();
-	th=-pi/4 + (20*PI)/180;
-	for (x=50; x<sizeX*sizeCell; x=x+200){
-	th=th+PI/4;
-	for (y=50; y<sizeY*sizeCell; y=y+200){
-	drawRobot(x,y,th);
-	wait1Msec(100);
-	}
-	}*/
-	eraseDisplay();
+	drawMap();
 
 	// reset odometry values and motor encoders.
 	nMotorEncoder[motorC] = 0;
@@ -90,7 +80,7 @@ task main(){
 	/*************ZIG ZAG AND GO TO BALL ROOM****************/
 	/********************************************************/
 	StartTask(updateOdometry);
-	/*if (color == 0) {
+	if (color == 0) {
 		align(1);
     wait1Msec(10);
     time1[T1] = 0;
@@ -114,6 +104,12 @@ task main(){
     setSpeed(0,0);
     nxtDisplayTextLine(2, "heading %f", heading);
     //align2(heading);
+    //Draw robot in zigzag
+    drawRobot(1*400,7*400,PI/2);
+    drawRobot(0*400,6*400,PI);
+    drawRobot(1*400,5*400,-(PI/2));
+    drawRobot(2*400,4*400,PI);
+    drawRobot(1*400,3*400,PI/2);
 		//planPath(PI,1,7,1,3,true);
 		planPath((PI/2),1,3,3,3,true);
 		} else {
@@ -142,8 +138,14 @@ task main(){
 	    nxtDisplayTextLine(2, "heading %f", heading);
 	    //align2(heading);
 		//planPath(PI,5,7,5,3,true);
-		//planPath(-(PI/2),5,3,3,3,true);
-	}*/
+	  //Draw robot in zigzag
+    drawRobot(5*400,400*7,-(PI/2));
+    drawRobot(6*400,400*6,PI);
+    drawRobot(5*400,400*5,PI/2);
+    drawRobot(4*400,400*4,PI);
+    drawRobot(5*400,400*3,-(PI/2));
+		planPath(-(PI/2),5,3,3,3,true);
+	}
 
 	/********************************************************/
 	/*******************FIND BALL****************************/
@@ -243,6 +245,33 @@ task main(){
 	float endY = robot_odometry.y;
 	robot_odometry.th = 0;
 	ReleaseMutex(semaphore_odometry);
+
+	float foundBallAuxX = endX;
+  float foundBallAuxY = endY;
+
+  float columnX = foundBallAuxX / 0.4;
+ 	float columnY = foundBallAuxY / 0.4;
+
+ 	int newYcolumn = 0;
+ 	if (columnY > 0) {
+ 		newYcolumn = (int)(columnY+0.5);
+ 	} else {
+ 		newYcolumn = (int)(columnY-0.5);
+ 	}
+ 	int newXcolumn = (int)(columnX+0.5);
+ 	int foundBallX =newYcolumn + 3;
+ 	int foundBallY = newXcolumn + 3;
+ 	//nxtDisplayTextLine(6, "%f", heading);
+ 	drawFindBall(3,3,foundBallX, foundBallY);
+ 	drawRobot(foundBallX*400,foundBallY*400,0);
+ 	drawRobot(foundBallX*400,foundBallY*400,PI);
+ 	drawRobot(foundBallX*400,foundBallY*400,-(PI/2));
+ 	drawRobot(foundBallX*400,foundBallY*400,PI/2);
+ 	if (color == 0) {
+ 		drawFindBall(foundBallX, foundBallY, 4, 6);
+	} else {
+		drawFindBall(foundBallX, foundBallY, 2, 6);
+	}
 
 	float goalY = 1.2;
 	float goalX = 0.4;
