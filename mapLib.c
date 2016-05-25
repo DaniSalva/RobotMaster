@@ -370,15 +370,45 @@ void drawRobot(float x_mm, float y_mm, float ang_rad){
 	while(th>7){th=th-8;}
 
 	//paint orientation
-	if(th==0)		    { nxtDrawLine(pixX,pixY,pixX+2,pixY);		}
-	else if(th==1)	{ nxtDrawLine(pixX,pixY,pixX+2,pixY+2);	}
-	else if(th==2)	{ nxtDrawLine(pixX,pixY,pixX,pixY+2);	  }
-	else if(th==3)	{ nxtDrawLine(pixX,pixY,pixX-2,pixY+2);	}
-	else if(th==4)	{ nxtDrawLine(pixX,pixY,pixX-2,pixY);		}
-	else if(th==5)	{ nxtDrawLine(pixX,pixY,pixX-2,pixY-2);	}
-	else if(th==6)	{ nxtDrawLine(pixX,pixY,pixX,pixY-2);		}
-	else if(th==7)	{ nxtDrawLine(pixX,pixY,pixX+2,pixY-2);	}
+	if(ang_rad==0){
+		nxtDrawLine(pixX,pixY,pixX,pixY-2);
+	}
+	else if(ang_rad>(-1.6) && ang_rad<(-1.5)){
+		nxtDrawLine(pixX,pixY,pixX-2,pixY);
+	}else if(ang_rad<(1.6) && ang_rad>(1.5)){
+		nxtDrawLine(pixX,pixY,pixX+2,pixY);
+		}else if(ang_rad<(3.2) && ang_rad>(3.1)){
+		nxtDrawLine(pixX,pixY,pixX,pixY+2);
+	}
 
+}
+
+void drawFindBall(int initX, int initY, int foundX, int foundY) {
+	int drawX = initX;
+	int drawY = initY;
+	bool xDone = false;
+	bool yDone = false;
+	while (!xDone || !yDone) {
+		if (drawX != foundX) {
+			if (drawX < foundX) {
+				drawX++;
+			} else {
+				drawX--;
+			}
+		} else {
+			xDone = true;
+		}
+		if (drawY != foundY) {
+			if (drawY < foundY) {
+				drawY++;
+			} else {
+				drawY--;
+			}
+		} else {
+			yDone = true;
+		}
+		drawRobot(drawX*400, drawY*400, 0);
+	}
 }
 
 void fillNF1Matrix(int x, int y, int value) {
@@ -451,6 +481,7 @@ int rotMovement(float previousDir, float goalth){
 
 // go from CURRENT position (odometry) to (middle??) of cell (cellX, cellY)
 bool go(int cellX, int cellY, float previousDir, float th, int x, int y, int x_end, int y_end, bool replan){
+	drawRobot(cellX*400,cellY*400,th);
 
 	int move =rotMovement(previousDir,th);
 	align(move);

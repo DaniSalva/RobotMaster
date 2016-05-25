@@ -65,16 +65,7 @@ task main(){
 		nxtDisplayTextLine(6, "Mapa NOT loaded");
 	}
 
-	/*drawMap();
-	th=-pi/4 + (20*PI)/180;
-	for (x=50; x<sizeX*sizeCell; x=x+200){
-	th=th+PI/4;
-	for (y=50; y<sizeY*sizeCell; y=y+200){
-	drawRobot(x,y,th);
-	wait1Msec(100);
-	}
-	}*/
-	eraseDisplay();
+	drawMap();
 
 	// reset odometry values and motor encoders.
 	nMotorEncoder[motorC] = 0;
@@ -242,6 +233,33 @@ task main(){
 	float endY = robot_odometry.y;
 	robot_odometry.th = 0;
 	ReleaseMutex(semaphore_odometry);
+
+	float foundBallAuxX = endX;
+  float foundBallAuxY = endY;
+
+  float columnX = foundBallAuxX / 0.4;
+ 	float columnY = foundBallAuxY / 0.4;
+
+ 	int newYcolumn = 0;
+ 	if (columnY > 0) {
+ 		newYcolumn = (int)(columnY+0.5);
+ 	} else {
+ 		newYcolumn = (int)(columnY-0.5);
+ 	}
+ 	int newXcolumn = (int)(columnX+0.5);
+ 	int foundBallX =newYcolumn + 3;
+ 	int foundBallY = newXcolumn + 3;
+ 	//nxtDisplayTextLine(6, "%f", heading);
+ 	drawFindBall(3,3,foundBallX, foundBallY);
+ 	drawRobot(foundBallX*400,foundBallY*400,0);
+ 	drawRobot(foundBallX*400,foundBallY*400,PI);
+ 	drawRobot(foundBallX*400,foundBallY*400,-(PI/2));
+ 	drawRobot(foundBallX*400,foundBallY*400,PI/2);
+ 	if (color == 0) {
+ 		drawFindBall(foundBallX, foundBallY, 4, 6);
+	} else {
+		drawFindBall(foundBallX, foundBallY, 2, 6);
+	}
 
 	float goalY = 1.2;
 	float goalX = 0.4;
