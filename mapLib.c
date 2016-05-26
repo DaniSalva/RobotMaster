@@ -144,7 +144,7 @@ bool readLineHeader(TFileHandle hFileHandle,TFileIOResult nIoResult, int & dimX,
 				endfile=true;
 
 				}else{
-				nxtDisplayTextLine(1, "PROBLEM READING map");
+				//nxtDisplayTextLine(1, "PROBLEM READING map");
 			}
 		}
 	}
@@ -203,7 +203,7 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 						//indNum++;
 						}else{
 						if (onechar=='1'){
-							nxtDisplayTextLine(3, " %d %d", mapCol,mapRow);
+							//nxtDisplayTextLine(3, " %d %d", mapCol,mapRow);
 							connectionsMatrix[mapCol][mapRow]=true;
 						}
 						// else { false} // by default is false
@@ -220,7 +220,7 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 				endfile=true;
 
 				}else{
-				nxtDisplayTextLine(1, "PROBLEM READING map");
+				//nxtDisplayTextLine(1, "PROBLEM READING map");
 			}
 		}
 	}
@@ -238,7 +238,7 @@ bool readNextLine(TFileHandle hFileHandle,TFileIOResult & nIoResult, int & mapRo
 	numbersRead[indNum]=num;
 	}*/
 
-	nxtDisplayTextLine(3, "%s ", linestring);
+	//nxtDisplayTextLine(3, "%s ", linestring);
 
 	/*for(int j=2; j<=indNum; ++j){
 	setConnection(numbersRead[0], numbersRead[1], numbersRead[j]);
@@ -272,7 +272,7 @@ bool loadMap(string mapFileName, bool &connections)
 
 	OpenRead(hFileHandle, nIoResult, mapFileName, nFileSize);
 	if( nIoResult ==0 ){
-		nxtDisplayTextLine(1, "OPEN OK: %d", nFileSize);
+		//nxtDisplayTextLine(1, "OPEN OK: %d", nFileSize);
 
 		//StringFromChars(sToString, FromChars)
 		//Converts an array of bytes to a string value.  You MUST end your char array with a char value of zero!
@@ -292,7 +292,7 @@ bool loadMap(string mapFileName, bool &connections)
 	}
 	else{
 		loadingOk=false;
-		nxtDisplayTextLine(1, "PROBLEM OPENING file");
+		//nxtDisplayTextLine(1, "PROBLEM OPENING file");
 	}
 
 	return loadingOk;
@@ -570,12 +570,14 @@ void goRightExit(int x, int y,int exit_xr,int exit_yr){
 	int move=rotMovement(th,0);
 	align(move);
 	fordward(0.4);
+	fordward(0.4);
 }
 
 void goLeftExit(int x, int y,int exit_xl,int exit_yl){
 	float th=planPath(0,x,y,exit_xl,exit_yl,false);
 	int move=rotMovement(th,0);
 	align(move);
+	fordward(0.4);
 	fordward(0.4);
 }
 
@@ -648,7 +650,7 @@ void findExit(int side){
 	}
 
 	if(!(foundGoal || foundOther)){
-		nxtDisplayTextLine(1, "NINGUNO");
+		//nxtDisplayTextLine(1, "NINGUNO");
 		while(!foundGoal && !foundOther){
 			_nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
 			centerGoal=0;
@@ -677,49 +679,49 @@ void findExit(int side){
 			}
 		}
 	}
-	nxtDisplayTextLine(2, "goal %f",centerGoal);
-	nxtDisplayTextLine(3, "other %f",centerOther);
+	//nxtDisplayTextLine(2, "goal %f",centerGoal);
+	//nxtDisplayTextLine(3, "other %f",centerOther);
 	setSpeed(0, 0);
 	if(foundGoal && foundOther){
 		if(centerGoal<centerOther){
 			if(side==0){
-				nxtDisplayTextLine(1, "2 izq-dere");
+				//nxtDisplayTextLine(1, "2 izq-dere");
 				goRightExit(start_x_left,start_y_left,exit_x_right,exit_y_right);
 			}
 			else{
-				nxtDisplayTextLine(1, "2 dere-dere");
+				//nxtDisplayTextLine(1, "2 dere-dere");
 				goRightExit(start_x_right,start_y_right,exit_x_right,exit_y_right);
 			}
 
 		}
 		else{
 			if(side==0){
-				nxtDisplayTextLine(1, "2 izq-izq");
+				//nxtDisplayTextLine(1, "2 izq-izq");
 				goLeftExit(start_x_left,start_y_left,exit_x_left,exit_y_left);
 			}
 			else{
-				nxtDisplayTextLine(1, "2 dere-izq");
+				//nxtDisplayTextLine(1, "2 dere-izq");
 				goLeftExit(start_x_right,start_y_right,exit_x_left,exit_y_left);
 			}
 		}
 	}
 	else if(foundGoal){
 		if(side==0){
-			nxtDisplayTextLine(1, "1 izq-izq");
+			//nxtDisplayTextLine(1, "1 izq-izq");
 			goLeftExit(start_x_left,start_y_left,exit_x_left,exit_y_left);
 		}
 		else{
-			nxtDisplayTextLine(1, "1 dere-dere");
+			//nxtDisplayTextLine(1, "1 dere-dere");
 			goRightExit(start_x_right,start_y_right,exit_x_right,exit_y_right);
 		}
 	}
 	else if(foundOther){
 		if(side==0){
-			nxtDisplayTextLine(1, "1 izq-dere");
+			//nxtDisplayTextLine(1, "1 izq-dere");
 			goRightExit(start_x_left,start_y_left,exit_x_right,exit_y_right);
 		}
 		else{
-			nxtDisplayTextLine(1, "1 dere-izq");
+			//nxtDisplayTextLine(1, "1 dere-izq");
 			goLeftExit(start_x_right,start_y_right,exit_x_left,exit_y_left);
 		}
 	}

@@ -47,23 +47,23 @@ task main(){
 	int light = LSvalNorm(lightSensor);
 	if(light < 17)  // If the Light Sensor reads a value less than 45:
 	{
-		nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
+		//nxtDisplayTextLine(1, "Veo negro");                  // Motor C is run at a 20 power level.
 		mp = "mapaB.txt";
 		color = 1;
 	}
 	else                               // If the Light Sensor reads a value greater than or equal to 45:
 	{
-		nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
+		//nxtDisplayTextLine(1, "Veo blanco");                 // Motor C is run at a 60 power level.
 		mp = "mapaA.txt";
 		color = 0;
 	}
 
 	if(	loadMap(mp,connectionsMatrix[0][0]) ){
-		nxtDisplayTextLine(6, "Mapa loaded ok");
+		//nxtDisplayTextLine(6, "Mapa loaded ok");
 		}else{
-		nxtDisplayTextLine(6, "Mapa NOT loaded");
+		//nxtDisplayTextLine(6, "Mapa NOT loaded");
 	}
-
+	eraseDisplay();
 	drawMap();
 
 	// reset odometry values and motor encoders.
@@ -90,7 +90,7 @@ task main(){
 	    rotSpeed = HTGYROreadRot(HTGYRO);
 			heading += rotSpeed * 50 * 0.001;
 		}
-		nxtDisplayTextLine(2, "heading %f", heading);
+		//nxtDisplayTextLine(2, "heading %f", heading);
     setSpeed(0,0);
     wait1Msec(10);
     time1[T1] = 0;
@@ -102,7 +102,7 @@ task main(){
 		}
 		time1[T1] = 0;
     setSpeed(0,0);
-    nxtDisplayTextLine(2, "heading %f", heading);
+    //nxtDisplayTextLine(2, "heading %f", heading);
     //align2(heading);
     //Draw robot in zigzag
     drawRobot(1*400,7*400,PI/2);
@@ -123,19 +123,19 @@ task main(){
 				heading += rotSpeed * 100 * 0.001;
 
 			}
-			nxtDisplayTextLine(2, "heading %f", heading);
+			//nxtDisplayTextLine(2, "heading %f", heading);
 	    setSpeed(0,0);
 	    wait1Msec(10);
 	    time1[T1] = 0;
 	    setSpeed(0.20,0.55);
-	    while(time1[T1] < 5500) {
+	    while(time1[T1] < 5700) {
 		    rotSpeed = HTGYROreadRot(HTGYRO);
 				heading += rotSpeed * 100 * 0.001;
 				wait1Msec(100);
 			}
 			time1[T1] = 0;
 	    setSpeed(0,0);
-	    nxtDisplayTextLine(2, "heading %f", heading);
+	    //nxtDisplayTextLine(2, "heading %f", heading);
 	    //align2(heading);
 		//planPath(PI,5,7,5,3,true);
 	  //Draw robot in zigzag
@@ -182,7 +182,7 @@ task main(){
 
 		// Get the blobs from the camera into the array
 		_nblobs = NXTCAMgetBlobs(cam, _blobs, _condensed);
-		nxtDisplayTextLine(6, "%d", _nblobs);
+		//nxtDisplayTextLine(6, "%d", _nblobs);
 
 		// Select blob of COLOR to be tracked
 		int found = 0;
@@ -191,14 +191,14 @@ task main(){
 
 			if (_blobs[i].colour == RED /*&& _blobs[i].size > AREA_COLOR*/) {
 				found = 1;
-				nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
-				nxtDisplayTextLine(5, "%d", _blobs[i].size);
+				//nxtDisplayTextLine(3, "%d %d %d %d", _blobs[i].x1, _blobs[i].y1, _blobs[i].x2, _blobs[i].y2);
+				//nxtDisplayTextLine(5, "%d", _blobs[i].size);
 				float w = alignToBall((_blobs[i].x1 + _blobs[i].x2)/2);
 				//Todo: if w is too big v = 0;
 				float v = speedToBall(_blobs[i].size);
 				setSpeed(v, w);
 				if (_blobs[i].size > DESIRED_AREA) {
-					nxtDisplayTextLine(3, "stop tracking");
+					//nxtDisplayTextLine(3, "stop tracking");
 					continueTracking = 0;
 				}
 			}
@@ -206,7 +206,7 @@ task main(){
 		}
 
 		if (!found) {
-			nxtDisplayTextLine(3, "not found");
+			//nxtDisplayTextLine(3, "not found");
 			wait1Msec(300);
 			if (color == 0) {
 				setSpeed(0, -0.5);
