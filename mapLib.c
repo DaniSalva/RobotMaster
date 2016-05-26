@@ -639,11 +639,11 @@ void findExit(int side){
 	foundGoal=false;
 	foundOther=false;
 	for (int i = 0; i < _nblobs; i++) {
-		if ((_blobs[i].colour ==  goalColor) && (_blobs[i].size>200)){
+		if ((_blobs[i].colour ==  goalColor) && (_blobs[i].size>500)){
 			foundGoal = true;
 			double centerGoal=(_blobs[i].x1 + _blobs[i].x2)/2;
 		}
-		else if ((_blobs[i].colour ==  otherColor) && (_blobs[i].size>200)){
+		else if ((_blobs[i].colour ==  otherColor) && (_blobs[i].size>500)){
 			foundOther=true;
 			double centerOther=(_blobs[i].x1 + _blobs[i].x2)/2;
 		}
