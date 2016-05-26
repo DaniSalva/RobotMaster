@@ -570,7 +570,7 @@ void goRightExit(int x, int y,int exit_xr,int exit_yr){
 	int move=rotMovement(th,0);
 	align(move);
 	fordward(0.4);
-	fordward(0.4);
+	fordward(0.2);
 }
 
 void goLeftExit(int x, int y,int exit_xl,int exit_yl){
@@ -578,7 +578,7 @@ void goLeftExit(int x, int y,int exit_xl,int exit_yl){
 	int move=rotMovement(th,0);
 	align(move);
 	fordward(0.4);
-	fordward(0.4);
+	fordward(0.2);
 }
 
 //side: 0 izquierda, 1 derecha

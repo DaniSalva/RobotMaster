@@ -155,7 +155,7 @@ void align2(int angle) {
 
 void fordward(float distance) {
 	setSpeed(0.1,0);
-	wait1Msec(4000);
+	wait1Msec(distance*10000);
 	setSpeed(0,0);
 }
 
